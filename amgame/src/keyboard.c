@@ -6,6 +6,7 @@ static const char *key_names[] = {
   AM_KEYS(KEYNAME)
 };
 
+// 打印接受到的按键
 void print_key() {
   AM_INPUT_KEYBRD_T event = { .keycode = AM_KEY_NONE };
   ioe_read(AM_INPUT_KEYBRD, &event);
