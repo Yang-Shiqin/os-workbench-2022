@@ -35,11 +35,11 @@ void splash() {
 }
 
 void draw_me(int x, int y){
-    x = x<0?0:x;
-    y = y<0?0:y;
-    x = x>w*15/16?(w*15/16):x;
-    y = y>h*15/16?(h*15/16):y;
+    x = (x<0?0:x);
+    y = (y<0?0:y);
+    x = (x>(w*15/16)?(w*15/16):x);
+    y = (y>(h*15/16)?(h*15/16):y);
 
-    draw_tile(0,0,w,h,0);
+    draw_tile(0,0,w/16,h/16,0);
     draw_tile(x, y, w/16, h/16, 0xff0000);
 }
