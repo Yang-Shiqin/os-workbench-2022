@@ -22,13 +22,24 @@ static void draw_tile(int x, int y, int w, int h, uint32_t color) {
   ioe_write(AM_GPU_FBDRAW, &event);
 }
 
+// 黑白棋盘格
 void splash() {
   init();
   for (int x = 0; x * SIDE <= w; x ++) {
     for (int y = 0; y * SIDE <= h; y++) {
-      if ((x & 1) ^ (y & 1)) {
+      if ((x & 1) ^ (y & 1)) {// x和y一奇一偶
         draw_tile(x * SIDE, y * SIDE, SIDE, SIDE, 0xffffff); // white
       }
     }
   }
+}
+
+void draw_me(int x, int y){
+    x = x<0?0:x;
+    y = y<0?0:y;
+    x = x>w*15/16?(w*15/16):x;
+    y = y>h*15/16?(h*15/16):y;
+
+    draw_tile(0,0,w,h,0);
+    draw_tile(x, y, w/16, h/16, 0xff0000);
 }
