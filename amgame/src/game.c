@@ -2,6 +2,7 @@
 
 // Operating system is a C program!
 int main(const char *args) {
+  int x=0, y=0;
   ioe_init();
 
   puts("mainargs = \"");
@@ -9,10 +10,15 @@ int main(const char *args) {
   puts("\"\n");
 
   splash();
+  draw_me(x, y);
 
   puts("Press any key to see its key code...\n");
   while (1) {
-    print_key();
+    //print_key();
+    int tmp = move();
+    x += (tmp&1) - (!!(tmp&2));
+    y += (tmp&4) - (!!(tmp&8));
+    draw_me(x, y);
   }
   return 0;
 }
