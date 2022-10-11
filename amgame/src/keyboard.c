@@ -14,8 +14,6 @@ void print_key() {
     puts("Key pressed: ");
     puts(key_names[event.keycode]);
     puts("\n");
-    putch(event.keycode+53);
-    puts("\n");
   }
 }
 
@@ -26,6 +24,8 @@ int move(){
   ioe_read(AM_INPUT_KEYBRD, &event);
   if (event.keycode != AM_KEY_NONE && event.keydown) {
       switch (event.keycode){
+      case 0x01: // esc
+          return 0x10;
       case 0x4d: // up
           return 8;
       case 0x4e: // down
