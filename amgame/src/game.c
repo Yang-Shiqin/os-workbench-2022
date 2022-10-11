@@ -14,11 +14,11 @@ int main(const char *args) {
 
   puts("Press any key to see its key code...\n");
   while (1) {
-    //print_key();
-    int tmp = move();
-    x += (tmp&1) - (!!(tmp&2));
-    y += (tmp&4) - (!!(tmp&8));
-    draw_me(x, y);
+    print_key();
+    //int tmp = move();
+    //x += (tmp&1) - (!!(tmp&2));
+    //y += (tmp&4) - (!!(tmp&8));
+    //draw_me(x, y);
   }
   return 0;
 }
