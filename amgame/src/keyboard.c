@@ -14,7 +14,7 @@ void print_key() {
     puts("Key pressed: ");
     puts(key_names[event.keycode]);
     puts("\n");
-    putch(event.keycode-30);
+    putch(event.keycode+53);
     puts("\n");
   }
 }
