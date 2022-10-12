@@ -22,9 +22,16 @@ int main(const char *args) {
         halt(0);
     }
     if (tmp){
+        puts("\nysq");
       x += ((tmp&1) - (!!(tmp&2)))*2;
       y += ((!!(tmp&4)) - (!!(tmp&8)))*2;
+      if (x<0){
+          puts("\nsd");
+      }
       x = (x<0?0:x);
+      if (x<0){
+          puts("\nsd");
+      }
       y = (y<0?0:y);
       x = ((x+h/16)>w?(w-h/16):x);
       y = (y>(h*15/16)?(h*15/16):y);
