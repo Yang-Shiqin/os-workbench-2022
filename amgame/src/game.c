@@ -13,6 +13,9 @@ int main(const char *args) {
   get_wh(&w, &h);
   splash();
   draw_me(x, y);
+  puti(w);
+  puts("\n");
+  puti(h);
 
   puts("Press any key to see its key code...\n");
   while (1) {
