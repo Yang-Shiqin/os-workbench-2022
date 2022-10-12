@@ -17,7 +17,7 @@ static inline void puti(int num){
     char str[16]={0};
     int i=0;
     while(num){
-        str[i++] = (num%10)+'0';
+        str[i++] = (num%10)+(int)'0';
         num /= num;
     }
     for(;i>=0;i--){
