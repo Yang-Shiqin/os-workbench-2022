@@ -20,7 +20,7 @@ int main(const char *args) {
         halt(0);
     }
     if (tmp){
-      x += (tmp&1) - (!!(tmp&2));
+      x += ((tmp&1) - (!!(tmp&2)))*2;
       y += (tmp&4) - (!!(tmp&8));
       draw_me(x, y);
     }
