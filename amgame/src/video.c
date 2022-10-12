@@ -37,13 +37,13 @@ void splash() {
 void draw_me(int x, int y){
     x = (x<0?0:x);
     y = (y<0?0:y);
-    x = (x>(w*15/16)?(w*15/16):x);
+    x = ((x+h/16)>w?(w-h/16):x);
     y = (y>(h*15/16)?(h*15/16):y);
 
     for (int xi=0; xi<16; xi++){
       for (int yi=0;yi<16;yi++){
-        draw_tile(xi*16, yi*16, w/16, h/16, 0);
+        draw_tile(xi*16, yi*16, w/16, h/16, xi*20);
       }
     }
-    draw_tile(x, y, w/16, h/16, 0xff0000);
+    draw_tile(x, y, h/16, h/16, 0xff0000);
 }
