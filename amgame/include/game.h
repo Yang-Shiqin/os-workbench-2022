@@ -17,8 +17,8 @@ static inline void puti(int num){
     char str[16]={0};
     int i=0;
     while(num){
-        str[i++] = (num%10)+(int)'0';
-        num /= num;
+        str[i++] = (char)(num%10)+'0';
+        num /= 10;
     }
     for(;i>=0;i--){
         putch(str[i]);
