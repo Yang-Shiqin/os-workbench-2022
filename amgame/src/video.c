@@ -40,6 +40,10 @@ void draw_me(int x, int y){
     x = (x>(w*15/16)?(w*15/16):x);
     y = (y>(h*15/16)?(h*15/16):y);
 
-    draw_tile(0,0,w-1,h-1,0);
+    for (int xi=0; xi<16; xi++){
+      for (int yi=0;yi<16;yi++){
+        draw_tile(xi*16, yi*16, w/16, h/16, 0);
+      }
+    }
     draw_tile(x, y, w/16, h/16, 0xff0000);
 }
