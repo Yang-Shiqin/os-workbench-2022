@@ -19,9 +19,11 @@ int main(const char *args) {
     if (tmp&0x10){
         halt(0);
     }
-    x += (tmp&1) - (!!(tmp&2));
-    y += (tmp&4) - (!!(tmp&8));
-    draw_me(x, y);
+    if (tmp){
+      x += (tmp&1) - (!!(tmp&2));
+      y += (tmp&4) - (!!(tmp&8));
+      draw_me(x, y);
+    }
   }
   return 0;
 }

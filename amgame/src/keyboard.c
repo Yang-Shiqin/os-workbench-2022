@@ -6,7 +6,7 @@ static const char *key_names[] = {
   AM_KEYS(KEYNAME)
 };
 
-// 打印接受到的按键
+// 打印接收到的按键
 void print_key() {
   AM_INPUT_KEYBRD_T event = { .keycode = AM_KEY_NONE };
   ioe_read(AM_INPUT_KEYBRD, &event);
@@ -17,8 +17,7 @@ void print_key() {
   }
 }
 
-// move, the return value has 4 useful bits each means whether
-// move up, down, left and right
+// 返回5bit，分别表示是否接收到esc，上，下，左，右
 int move(){
   AM_INPUT_KEYBRD_T event = { .keycode = AM_KEY_NONE };
   ioe_read(AM_INPUT_KEYBRD, &event);
