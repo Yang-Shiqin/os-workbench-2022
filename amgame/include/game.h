@@ -13,15 +13,4 @@ static inline void puts(const char *s) {
 }
 
 // 打印10进制int
-static inline void puti(int num){
-    char str[16]={0};
-    int i=0;
-    while(num){
-        str[i++] = (char)(num%10)+'0';
-        num /= 10;
-    }
-    for(;i>0;i--){
-        putch(str[i-1]);
-        putch('0');
-    }
-}
+void put_int(int num);

@@ -9,13 +9,14 @@ int main(const char *args) {
   puts("mainargs = \"");
   puts(args); // make run mainargs=xxx
   puts("\"\n");
+  put_int(123);
 
   get_wh(&w, &h);
   splash();
   draw_me(x, y);
-  puti(w);
+  put_int(w);
   puts("\n");
-  puti(h);
+  put_int(h);
 
   puts("Press any key to see its key code...\n");
   while (1) {
