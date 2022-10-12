@@ -44,12 +44,14 @@ int move(){
 void put_int(int num){
     char str[16]={0};
     int i=0;
+    if(0==num){
+        putch('0');
+    }
     while(num){
         str[i++] = (char)(num%10)+'0';
         num /= 10;
     }
     for(;i>0;i--){
         putch(str[i-1]);
-        putch('0');
     }
 }
