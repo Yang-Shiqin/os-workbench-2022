@@ -34,6 +34,7 @@ void splash() {
   }
 }
 
+/* ysq */
 void get_wh(int* ret_w, int* ret_h){
   *ret_w = w;
   *ret_h = h;
@@ -52,3 +53,4 @@ void draw_me(int x, int y){
     }
     draw_tile(x, y, h/16, h/16, 0xff0000);
 }
+/* ysq end */

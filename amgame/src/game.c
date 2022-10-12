@@ -11,13 +11,15 @@ int main(const char *args) {
   puts("\"\n");
 
   splash();
+  // ysq
   get_wh(&w, &h); // 要在splash之后(splash的init获取w和h)
   draw_me(x, y);
-  puts("\n");
 
-  puts("Press any key to see its key code...\n");
+  //puts("Press any key to see its key code...\n");
   while (1) {
     // print_key();
+    
+    // ysq
     int tmp = move();
     if (tmp&0x10){
         halt(0);

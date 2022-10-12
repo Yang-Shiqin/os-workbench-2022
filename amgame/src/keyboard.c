@@ -17,6 +17,7 @@ void print_key() {
   }
 }
 
+/* ysq */
 // 返回5bit，分别表示是否接收到esc，上，下，左，右
 int move(){
   AM_INPUT_KEYBRD_T event = { .keycode = AM_KEY_NONE };
@@ -55,3 +56,5 @@ void put_int(int num){
         putch(str[i-1]);
     }
 }
+
+/* ysq end */
