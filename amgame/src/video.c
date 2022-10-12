@@ -34,11 +34,16 @@ void splash() {
   }
 }
 
+void get_wh(int* ret_w, int* ret_h){
+  *ret_w = w;
+  *ret_h = h;
+}
+
 void draw_me(int x, int y){
-    x = (x<0?0:x);
-    y = (y<0?0:y);
-    x = ((x+h/16)>w?(w-h/16):x);
-    y = (y>(h*15/16)?(h*15/16):y);
+    // x = (x<0?0:x);
+    // y = (y<0?0:y);
+    // x = ((x+h/16)>w?(w-h/16):x);
+    // y = (y>(h*15/16)?(h*15/16):y);
 
     for (int xi=0; xi<16; xi++){
       for (int yi=0;yi<16;yi++){
