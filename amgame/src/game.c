@@ -23,8 +23,8 @@ int main(const char *args) {
         halt(0);
     }
     if (tmp){
-      x += ((tmp&1) - (!!(tmp&2)))*2;
-      y += ((!!(tmp&4)) - (!!(tmp&8)))*2;
+      x += ((tmp&1) - (!!(tmp&2)))*4;
+      y += ((!!(tmp&4)) - (!!(tmp&8)))*4;
       x = (x<0?0:x);
       y = (y<0?0:y);
       x = ((x+h/16)>w?(w-h/16):x);
