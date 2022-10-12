@@ -25,12 +25,12 @@ int main(const char *args) {
         puts("\nysq");
       x += ((tmp&1) - (!!(tmp&2)))*2;
       y += ((!!(tmp&4)) - (!!(tmp&8)))*2;
-      if (x<0){
-          x = 0;
+      if (x+h/16>w){
+          puts("\nerr1");
       }
       x = (x<0?0:x);
-      if (y<0){
-          y = 0;
+      if (y>(h*15/16)){
+          puts("\nerr2");
       }
       y = (y<0?0:y);
       //x = ((x+h/16)>w?(w-h/16):x);
