@@ -1,6 +1,7 @@
 #include "co.h"
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 #include <ucontext.h>
 
 #ifndef LOCAL_MACHINE
