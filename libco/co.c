@@ -46,10 +46,10 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     ret->ucp_end.uc_stack.ss_size = sizeof(ret->stack_end); // 栈大小
     makecontext(&(ret->ucp_end), (void (*)(void))co_end, 1, now);
     strcpy(ret->name, name);
+    getcontext(&(ret->ucp));
     ret->ucp.uc_stack.ss_sp = ret->stack;
     ret->ucp.uc_stack.ss_size = sizeof(ret->stack); // 栈大小
     ret->ucp.uc_link = &(ret->ucp_end); 
-    getcontext(&(ret->ucp));
     getcontext(&(ret->ucp_sta));
     ret->ucp_sta.uc_stack.ss_sp = ret->stack_sta;
     ret->ucp_sta.uc_stack.ss_size = sizeof(ret->stack_sta); // 栈大小
