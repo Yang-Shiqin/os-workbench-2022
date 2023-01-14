@@ -59,7 +59,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     debug("before set\n");
     // setcontext(&context);
     // setcontext(&(ret->ucp));
-    swapcontext(&ret->ucp_sta, &ret->ucp);
+    swapcontext(&(ret->ucp_sta), &(ret->ucp));
     return ret;
 }
 
