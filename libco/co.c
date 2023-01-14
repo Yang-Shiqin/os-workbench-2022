@@ -16,9 +16,9 @@ struct co {
     ucontext_t ucp;
     ucontext_t ucp_end;
     ucontext_t ucp_sta;
-    char stack[4096];
-    char stack_end[4096];
-    char stack_sta[4096];
+    char stack[8192];
+    char stack_end[8192];
+    char stack_sta[8192];
 };
 
 static struct co* list[128]={0};
