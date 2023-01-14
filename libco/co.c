@@ -24,6 +24,7 @@ struct co {
 static struct co* list[128]={0};
 static int next=0;
 static int now=0;
+static int max=0;
 static struct co end;
 
 void co_end(int i){
@@ -38,6 +39,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     now = next;
     while(NULL!=list[next]){
         next = (next+1)%128;
+        max = next>max?next:max;
     }
 
     ret->state = 1; // 开始
@@ -74,9 +76,9 @@ void co_wait(struct co *co) {
 }
 
 void co_yield() {
-    int i = rand() % 128;
+    int i = rand() % (max+1);
     while(NULL==list[i]){
-        i = rand() % 128;
+        i = rand() % (max+1);
     }
     int tmp=now;
     now = i;
