@@ -50,6 +50,9 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     ret->ucp.uc_stack.ss_size = sizeof(ret->stack); // 栈大小
     ret->ucp.uc_link = &(ret->ucp_end); 
     getcontext(&(ret->ucp));
+    getcontext(&(ret->ucp_sta));
+    ret->ucp_sta.uc_stack.ss_sp = ret->stack_sta;
+    ret->ucp_sta.uc_stack.ss_size = sizeof(ret->stack_sta); // 栈大小
     makecontext(&(ret->ucp), (void (*)(void))func, 1, arg); // 指定待执行的函数入口
     // getcontext(&context);
     // context.uc_link = &(ret->ucp);
