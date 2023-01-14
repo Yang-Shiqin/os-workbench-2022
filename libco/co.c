@@ -21,10 +21,10 @@ struct co {
     char stack_sta[4096];
 };
 
-struct co* list[128]={0};
-int next=0;
-int now=0;
-struct co end;
+static struct co* list[128]={0};
+static int next=0;
+static int now=0;
+static struct co end;
 
 void co_end(int i){
     list[i]->state = 0;
