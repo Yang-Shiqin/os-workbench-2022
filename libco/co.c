@@ -9,6 +9,7 @@ struct co {
     ucontext_t ucp;
     ucontext_t ucp_end;
     char stack[1024];
+    char stack_end[1024];
 };
 
 struct co* list[128]={0};
@@ -31,13 +32,15 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
 
     ret->state = 1; // 开始
     getcontext(&(ret->ucp_end));
-    makecontext(&(ret->ucp_end), co_end, 1, now);
+    ret->ucp_end.uc_stack.ss_sp = ret->stack_end;
+    ret->ucp_end.uc_stack.ss_size = sizeof(ret->stack_end); // 栈大小
+    makecontext(&(ret->ucp_end), (void (*)(void))co_end, 1, now);
     strcpy(ret->name, name);
     ret->ucp.uc_stack.ss_sp = ret->stack;
     ret->ucp.uc_stack.ss_size = sizeof(ret->stack); // 栈大小
     ret->ucp.uc_link = &(ret->ucp_end); 
     getcontext(&(ret->ucp));
-    makecontext(&(ret->ucp), func, 1, arg); // 指定待执行的函数入口
+    makecontext(&(ret->ucp), (void (*)(void))func, 1, arg); // 指定待执行的函数入口
     getcontext(&context);
     context.uc_link = &(ret->ucp);
     setcontext(&context);
