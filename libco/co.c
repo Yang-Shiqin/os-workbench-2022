@@ -5,7 +5,7 @@
 
 struct co {
     char state;
-    char name[8];
+    char name[16];
     ucontext_t ucp;
     ucontext_t ucp_end;
     char stack[1024];
