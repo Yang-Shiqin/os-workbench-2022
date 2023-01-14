@@ -18,7 +18,7 @@ struct co {
     ucontext_t ucp_sta;
     char stack[8192];
     char stack_end[8192];
-    // char stack_sta[8192];
+    char stack_sta[8192];
 };
 
 static struct co* list[128]={0};
@@ -32,7 +32,6 @@ void co_end(int i){
 
 struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     debug("start\n");
-    char stack_sta[8192];
     struct co* ret = malloc(sizeof(struct co));
     list[next] = ret;
     now = next;
@@ -46,14 +45,14 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     getcontext(&(ret->ucp_sta));
     ret->ucp_end.uc_stack.ss_sp = ret->stack_end;
     ret->ucp_end.uc_stack.ss_size = sizeof(ret->stack_end); // 栈大小
-    ret->ucp_end.uc_link = NULL;
+    ret->ucp_end.uc_link = &(ret->ucp_sta);
     makecontext(&(ret->ucp_end), (void (*)(void))co_end, 1, now);
     strcpy(ret->name, name);
     ret->ucp.uc_stack.ss_sp = ret->stack;
     ret->ucp.uc_stack.ss_size = sizeof(ret->stack); // 栈大小
     ret->ucp.uc_link = &(ret->ucp_end); 
-    ret->ucp_sta.uc_stack.ss_sp = stack_sta;
-    ret->ucp_sta.uc_stack.ss_size = sizeof(stack_sta); // 栈大小
+    ret->ucp_sta.uc_stack.ss_sp = ret->stack_sta;
+    ret->ucp_sta.uc_stack.ss_size = sizeof(ret->stack_sta); // 栈大小
     ret->ucp_sta.uc_link = NULL;
     makecontext(&(ret->ucp), (void (*)(void))func, 1, arg); // 指定待执行的函数入口
     debug("before set\n");
