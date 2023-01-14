@@ -82,7 +82,7 @@ void co_yield() {
         i = rand() % (max+1);
     }
     int tmp=now;
-    debug("%d\n", now);
+    debug("%d, %d, %d\n", now, i, max);
     now = i;
     swapcontext(&(list[tmp]->ucp), &(list[i]->ucp));
 }
