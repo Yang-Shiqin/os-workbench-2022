@@ -3,6 +3,12 @@
 #include <string.h>
 #include <ucontext.h>
 
+#ifndef LOCAL_MACHINE
+  #define debug(...) printf(__VA_ARGS__)
+#else
+  #define debug()
+#endif
+
 struct co {
     char state;
     char name[16];
@@ -22,6 +28,7 @@ void co_end(int i){
 }
 
 struct co *co_start(const char *name, void (*func)(void *), void *arg) {
+    debug("start\n");
     ucontext_t context;
     struct co* ret = malloc(sizeof(struct co));
     list[next] = ret;
@@ -43,6 +50,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     makecontext(&(ret->ucp), (void (*)(void))func, 1, arg); // 指定待执行的函数入口
     getcontext(&context);
     context.uc_link = &(ret->ucp);
+    debug("before set\n");
     setcontext(&context);
     return ret;
 }
