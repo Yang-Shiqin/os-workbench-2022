@@ -15,8 +15,10 @@ struct co {
     char name[16];
     ucontext_t ucp;
     ucontext_t ucp_end;
+    ucontext_t ucp_sta;
     char stack[1024];
     char stack_end[1024];
+    char stack_sta[1024];
 };
 
 struct co* list[128]={0};
@@ -53,7 +55,8 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     // context.uc_link = &(ret->ucp);
     debug("before set\n");
     // setcontext(&context);
-    setcontext(&(ret->ucp));
+    // setcontext(&(ret->ucp));
+    swapcontext(&ret->ucp_sta, &ret->ucp);
     return ret;
 }
 
