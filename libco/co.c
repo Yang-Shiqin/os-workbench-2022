@@ -46,7 +46,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     getcontext(&(ret->ucp_sta));
     ret->ucp_end.uc_stack.ss_sp = ret->stack_end;
     ret->ucp_end.uc_stack.ss_size = sizeof(ret->stack_end); // 栈大小
-    debug("%zd", sizeof(ret->stack_end));
+    ret->ucp_end.uc_link = NULL;
     makecontext(&(ret->ucp_end), (void (*)(void))co_end, 1, now);
     strcpy(ret->name, name);
     ret->ucp.uc_stack.ss_sp = ret->stack;
@@ -54,6 +54,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     ret->ucp.uc_link = &(ret->ucp_end); 
     ret->ucp_sta.uc_stack.ss_sp = ret->stack_sta;
     ret->ucp_sta.uc_stack.ss_size = sizeof(ret->stack_sta); // 栈大小
+    ret->ucp_sta.uc_link = NULL;
     makecontext(&(ret->ucp), (void (*)(void))func, 1, arg); // 指定待执行的函数入口
     // getcontext(&context);
     // context.uc_link = &(ret->ucp);
