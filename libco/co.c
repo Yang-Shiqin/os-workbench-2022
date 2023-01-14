@@ -49,10 +49,11 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     ret->ucp.uc_link = &(ret->ucp_end); 
     getcontext(&(ret->ucp));
     makecontext(&(ret->ucp), (void (*)(void))func, 1, arg); // 指定待执行的函数入口
-    getcontext(&context);
-    context.uc_link = &(ret->ucp);
-    debug("before set\n");
-    setcontext(&context);
+    // getcontext(&context);
+    // context.uc_link = &(ret->ucp);
+    // debug("before set\n");
+    // setcontext(&context);
+    setcontext(&(ret->ucp));
     return ret;
 }
 
