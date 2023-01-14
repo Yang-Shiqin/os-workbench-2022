@@ -28,6 +28,7 @@ static struct co end;
 
 void co_end(int i){
     list[i]->state = 0;
+    debug("end\n");
 }
 
 struct co *co_start(const char *name, void (*func)(void *), void *arg) {
