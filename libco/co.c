@@ -89,7 +89,7 @@ void co_yield() {
     now = i;
     int val = setjmp(list[tmp]->env);
     if (val == 0) {
-        tack_switch_call(list[now]->stack, list[now]->func, list[now]->arg);
+        stack_switch_call(list[now]->stack, list[now]->func, list[now]->arg);
         longjmp(list[now]->env, 0);
     } else {
         ;
