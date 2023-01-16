@@ -85,7 +85,7 @@ void co_wait(struct co *co) {
 void co_yield() {
     debug("yield\n");
     int i = rand() % (max+1);
-    while(NULL==list[i]){
+    while(NULL==list[i] || list[i]->state==0){
         i = rand() % (max+1);
     }
     int tmp=now;
