@@ -34,7 +34,7 @@ enum co_status {
 
 struct co {
     enum co_status state;       // 协程状态
-    char* name;                 // 协程名字
+    const char* name;                 // 协程名字
     jmp_buf env;                // 保存上下文
     uint8_t stack[STACK_SIZE];  // 协程的堆栈
     void (*func)(void *);       // co_start 指定的入口地址和参数
