@@ -28,7 +28,7 @@ static void work(void *arg) {
 }
 
 static void test_1() {
-printf("sdf");
+
     struct co *thd1 = co_start("thread-1", work, "X");
     struct co *thd2 = co_start("thread-2", work, "Y");
 
@@ -129,4 +129,7 @@ int main() {
     printf("\n\n");
 
     return 0;
+}
+static __attribute__((constructor)) void co_constructor(void) {
+  struct co *current = co_start("main", main, NULL);
 }
