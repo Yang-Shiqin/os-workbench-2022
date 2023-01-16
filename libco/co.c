@@ -28,7 +28,7 @@ static int max=0;
 static struct co end;
 
 static __attribute__((constructor)) void co_constructor(void) {
-  struct co *current = co_start("main", NULL, NULL);
+  struct co *current = co_start("main", main, NULL);
 }
 
 void co_end(int i){
