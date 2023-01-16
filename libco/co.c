@@ -27,11 +27,7 @@ static int now=0;
 static int max=0;
 static struct co end;
 
-char *a = "main";
 
-static __attribute__((constructor)) void co_constructor(void) {
-  struct co *current = co_start(a, NULL, NULL);
-}
 
 void co_end(int i){
     list[i]->state = 0;
