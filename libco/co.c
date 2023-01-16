@@ -5,7 +5,7 @@
 #include <setjmp.h>
 #include <stdint.h>
 
-#define STACK_SIZE 2048
+#define STACK_SIZE 8192
 
 #ifndef LOCAL_MACHINE
   #define debug(...) printf(__VA_ARGS__)
