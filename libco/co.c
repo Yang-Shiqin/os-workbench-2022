@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <setjmp.h>
+#include <stdint.h>
 
 #define STACK_SIZE 2048
 
