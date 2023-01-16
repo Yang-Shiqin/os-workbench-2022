@@ -92,4 +92,6 @@ void co_yield() {
     debug("%d, %d, %d\n", now, i, max);
     now = i;
     swapcontext(&(list[tmp]->ucp), &(list[i]->ucp));
+    list[tmp]->state = 0;
+    co_yield();
 }
