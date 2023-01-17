@@ -84,7 +84,7 @@ void co_yield() {
     int tmp=now;
     debug("%d, %d, %d, %s, %d\n", now, i, max, list[i]->name, list[i]->state);
     now = i;
-    if(list[now]->state==CO_NEW){
+    // if(list[now]->state==CO_NEW){
         getcontext(&(list[now]->ucp));
         list[now]->state=CO_RUNNING;
         list[now]->ucp.uc_stack.ss_sp = list[now]->stack;
@@ -94,9 +94,9 @@ void co_yield() {
         list[now]->state = CO_DEAD;
         list[now]->waiter->state = CO_RUNNING;
         co_yield();
-    }else{
-        swapcontext(&(list[tmp]->ucp), &(list[now]->ucp));
-    }
+    // }else{
+    //     swapcontext(&(list[tmp]->ucp), &(list[now]->ucp));
+    // }
 
 }
 static __attribute__((constructor)) void co_constructor(void) {
