@@ -39,8 +39,8 @@ struct co {
     enum co_status state;
     struct co* waiter;
     jmp_buf env;
-    void *arg;
     unsigned char stack[STACK_SIZE];  // 栈太小会segmentation fault
+    void *arg;
 };
   
 static struct co* list[LIST_SIZE]={0};
