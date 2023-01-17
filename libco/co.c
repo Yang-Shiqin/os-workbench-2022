@@ -75,28 +75,29 @@ void co_wait(struct co *co) {
 }
 
 void co_yield() {
-    getcontext(&(list[now]->ucp));
+        getcontext(&(list[last]->ucp));
     debug("yield\n");
     int i = rand() % (max+1);
     while((NULL==list[i]) || ((list[i]->state!=CO_RUNNING) 
         && (list[i]->state!=CO_NEW))){
         i = rand() % (max+1);
     }
-    int tmp=now;
+    int last=now;
     debug("%d, %d, %d, %s, %d\n", now, i, max, list[i]->name, list[i]->state);
     now = i;
-    // if(list[now]->state==CO_NEW){
+        getcontext(&(list[now]->ucp));
+    if(list[now]->state==CO_NEW){
         list[now]->state=CO_RUNNING;
         list[now]->ucp.uc_stack.ss_sp = list[now]->stack;
         list[now]->ucp.uc_stack.ss_size = sizeof(list[now]->stack); // 栈大小
         makecontext(&(list[now]->ucp), (void (*)(void))list[now]->func, 1, list[now]->arg); // 指定待执行的函数入口
-        swapcontext(&(list[tmp]->ucp), &(list[now]->ucp));
+        swapcontext(&(list[last]->ucp), &(list[now]->ucp));
         list[now]->state = CO_DEAD;
         list[now]->waiter->state = CO_RUNNING;
         co_yield();
-    // }else{
-    //     swapcontext(&(list[tmp]->ucp), &(list[now]->ucp));
-    // }
+    }else{
+        swapcontext(&(list[last]->ucp), &(list[now]->ucp));
+    }
 
 }
 static __attribute__((constructor)) void co_constructor(void) {
