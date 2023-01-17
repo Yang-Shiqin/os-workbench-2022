@@ -75,7 +75,6 @@ void co_wait(struct co *co) {
 }
 
 void co_yield() {
-    getcontext(&(list[now]->ucp));
     int i = rand() % (max+1);
     while((NULL==list[i]) || ((list[i]->state!=CO_RUNNING) 
         && (list[i]->state!=CO_NEW))){
@@ -84,13 +83,13 @@ void co_yield() {
     int last=now;
     debug("%d, %d, %d, %s, %d, %s\n", now, i, max, list[i]->name, list[i]->state, (char*)list[i]->arg);
     now = i;
+    getcontext(&(list[last]->ucp));
     if(list[now]->state==CO_NEW){
         list[now]->state=CO_RUNNING;
         getcontext(&(list[now]->ucp));
         list[now]->ucp.uc_stack.ss_sp = list[now]->stack;
         list[now]->ucp.uc_stack.ss_size = sizeof(list[now]->stack); // 栈大小
         makecontext(&(list[now]->ucp), (void (*)(void))list[now]->func, 1, list[now]->arg); // 指定待执行的函数入口
-        // swapcontext(&(list[last]->ucp), &(list[now]->ucp));
         setcontext(&(list[now]->ucp));
         list[now]->state = CO_DEAD;
         if(list[now]->waiter)
