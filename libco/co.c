@@ -49,37 +49,37 @@ static int now=0;
 static int max=0;
 
 struct co *co_start(const char *name, void (*func)(void *), void *arg) {
-    struct co* ret = (struct co*)malloc(sizeof(struct co));
-    list[next] = ret;
+  struct co *coroutine = (struct co *)malloc(sizeof(struct co));
+  assert(coroutine);
+
+  coroutine->name = name;
+  coroutine->func = func;
+  coroutine->arg = arg;
+  coroutine->state = CO_NEW;
+  coroutine->waiter = NULL;
+
+    list[next] = coroutine;
     while(NULL!=list[next]){
         next = (next+1)%LIST_SIZE;
         max = next>max?next:max;
     }
-
-    ret->state = CO_NEW; // 开始
-    ret->name = name;
-    ret->waiter = NULL;
-    ret->func = func;
-    ret->arg = arg;
-    return ret;
+  return coroutine;
 }
 
 void co_wait(struct co *co) {
     // todo
-    while(NULL!=co && CO_DEAD!=co->state){
+    while(CO_DEAD!=co->state){
         list[now]->state = CO_WAITING;
         co->waiter = list[now];
         co_yield();
     }
-    // if(NULL!=co){
-    //     int i;
-    //     for(i=0; i<LIST_SIZE && list[i]!=co; i++){;}
-    //     if(list[i]==co){
-    //         free(co);
-    //         co = NULL;
-    //         list[i]=NULL;
-    //     }
-    // }
+    int i;
+    for(i=0; i<LIST_SIZE && list[i]!=co; i++){;}
+    if(list[i]==co){
+        free(co);
+        co = NULL;
+        list[i]=NULL;
+    }
 }
 
 void co_yield() {
