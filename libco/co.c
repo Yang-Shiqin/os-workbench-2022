@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include <ucontext.h>
+#include <setjmp.h>
   
 #ifndef LOCAL_MACHINE
   #define debug(...) printf(__VA_ARGS__)
