@@ -37,8 +37,8 @@ struct co {
     enum co_status state;
     const char* name;
     void (*func)(void *); // co_start 指定的入口地址和参数
-    unsigned char stack[STACK_SIZE];  // 栈太小会segmentation fault
     uintptr_t arg;
+    unsigned char stack[STACK_SIZE];  // 栈太小会segmentation fault
     struct co* waiter;
     jmp_buf env;
 };
