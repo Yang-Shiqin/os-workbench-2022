@@ -82,7 +82,7 @@ void co_yield() {
         i = rand() % (max+1);
     }
     int last=now;
-    debug("%d, %d, %d, %s, %d, %s\n", now, i, max, list[i]->name, list[i]->state, list[i]->arg);
+    debug("%d, %d, %d, %s, %d, %s\n", now, i, max, list[i]->name, list[i]->state, (char*)list[i]->arg);
     now = i;
     if(list[now]->state==CO_NEW){
         list[now]->state=CO_RUNNING;
