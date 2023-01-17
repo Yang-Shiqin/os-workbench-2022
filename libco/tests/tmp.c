@@ -66,18 +66,20 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
 
 void co_wait(struct co *co) {
     // todo
-    while(CO_DEAD!=co->state){
+    while(NULL!=co && CO_DEAD!=co->state){
         list[now]->state = CO_WAITING;
         co->waiter = list[now];
         co_yield();
     }
-        int i;
-        for(i=0; i<LIST_SIZE && list[i]!=co; i++){;}
-        if(list[i]==co){
-            free(co);
-            co = NULL;
-            list[i]=NULL;
-        }
+    // if(NULL!=co){
+    //     int i;
+    //     for(i=0; i<LIST_SIZE && list[i]!=co; i++){;}
+    //     if(list[i]==co){
+    //         free(co);
+    //         co = NULL;
+    //         list[i]=NULL;
+    //     }
+    // }
 }
 
 void co_yield() {
