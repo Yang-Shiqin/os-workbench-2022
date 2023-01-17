@@ -42,11 +42,10 @@ struct co {
     struct co* waiter;
 };
   
-static struct co* list[128]={0};
+static struct co* list[256]={0};
 static int next=0;
 static int now=0;
 static int max=0;
-static struct co end;
   
 struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     struct co* ret = (struct co*)malloc(sizeof(struct co));
@@ -91,7 +90,7 @@ void co_yield() {
         }
         now = i;
         if(list[now]->state==CO_NEW){
-            ((struct co volatile *)list[now])->state=CO_RUNNING;
+            ((struct co volatile *)list[now])->state = CO_RUNNING;
             // 寄存器从高向低生长
             stack_switch_call(list[now]->stack+STACK_SIZE, list[now]->func, (uintptr_t)list[now]->arg);   // 切换栈，在自己的栈上运行函数
             // 函数运行完
