@@ -12,6 +12,7 @@
 #endif
   
 #define STACK_SIZE 8192
+#define LIST_SIZE 128
 
 static inline void stack_switch_call(void *sp, void *entry, uintptr_t arg) {
   asm volatile (
@@ -33,16 +34,16 @@ enum co_status {
 };
 
 struct co {
-    enum co_status state;
     const char* name;
-    jmp_buf env;
-    unsigned char stack[STACK_SIZE];  // 栈太小会segmentation fault
     void (*func)(void *); // co_start 指定的入口地址和参数
     void *arg;
+    enum co_status state;
     struct co* waiter;
+    jmp_buf env;
+    unsigned char stack[STACK_SIZE];  // 栈太小会segmentation fault
 };
   
-static struct co* list[128]={0};
+static struct co* list[LIST_SIZE]={0};
 static int next=0;
 static int now=0;
 static int max=0;
@@ -51,7 +52,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     struct co* ret = (struct co*)malloc(sizeof(struct co));
     list[next] = ret;
     while(NULL!=list[next]){
-        next = (next+1)%128;
+        next = (next+1)%LIST_SIZE;
         max = next>max?next:max;
     }
 
@@ -69,15 +70,15 @@ void co_wait(struct co *co) {
         co->waiter = list[now];
         co_yield();
     }
-    if(NULL!=co){
-        int i;
-        for(i=0; i<128 && list[i]!=co; i++){;}
-        if(list[i]==co){
-            free(co);
-            co = NULL;
-            list[i]=NULL;
-        }
-    }    
+    // if(NULL!=co){
+    //     int i;
+    //     for(i=0; i<LIST_SIZE && list[i]!=co; i++){;}
+    //     if(list[i]==co){
+    //         free(co);
+    //         co = NULL;
+    //         list[i]=NULL;
+    //     }
+    // }    
 }
 
 void co_yield() {
@@ -111,7 +112,7 @@ static __attribute__((constructor)) void co_constructor(void) {
 
 static __attribute__((destructor)) void co_destructor(void) {
     int i;
-    for(i=0; i<128; i++){
+    for(i=0; i<LIST_SIZE; i++){
         if(list[i]!=NULL){
             free(list[i]);
             list[i]=NULL;
