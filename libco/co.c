@@ -60,7 +60,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     ret->name = name;
     ret->waiter = NULL;
     ret->func = func;
-    ret->arg = arg;
+    ret->arg = (uintptr_t)arg;
     return ret;
 }
 
