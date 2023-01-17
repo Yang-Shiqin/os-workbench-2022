@@ -32,7 +32,7 @@ static inline void stack_switch_call(void *sp, void *entry, uintptr_t arg) {
 #if __x86_64__
       "movq %0, %%rsp; movq %2, %%rdi; call *%1"
       :
-      : "b"((uintptr_t)sp - 16), "d"((uintptr_t)entry), "a"((uintptr_t)arg)
+      : "b"((uintptr_t)sp), "d"((uintptr_t)entry), "a"((uintptr_t)arg)
 #else
       "movl %%ecx, 4(%0); movl %0, %%esp; movl %2, 0(%0); call *%1"
       :
