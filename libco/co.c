@@ -11,7 +11,7 @@
   #define debug()
 #endif
   
-#define STACK_SIZE 8192
+#define STACK_SIZE 8192*16
 #define LIST_SIZE 128
 
 static inline void stack_switch_call(void *sp, void *entry, uintptr_t arg) {
