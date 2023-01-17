@@ -97,11 +97,8 @@ void co_yield() {
             list[now]->waiter->state = CO_RUNNING;
         co_yield();
     }else{
-        if(last==now){
-            setcontext(&(list[now]->ucp));
-        }else{
-            swapcontext(&(list[last]->ucp), &(list[now]->ucp));
-        }
+        setcontext(&(list[now]->ucp));
+        
     }
 
 }
