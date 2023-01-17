@@ -154,7 +154,7 @@ void co_yield () {
   if (!status) {
     int i = rand() % (max+1);
     while((NULL==list[i]) ||
-    ((list[i]->state!=CO_RUNNING) && (list[i]->state!=CO_NEW))){
+    ((list[i]->status!=CO_RUNNING) && (list[i]->status!=CO_NEW))){
         i = rand() % (max+1);
     }
     now = i;
