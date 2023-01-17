@@ -10,15 +10,23 @@
   #define debug()
 #endif
   
+#define STACK_SIZE 8192
+
+enum co_status {
+  CO_NEW = 1, // 新创建，还未执行过
+  CO_RUNNING, // 已经执行过
+  CO_WAITING, // 在 co_wait 上等待
+  CO_DEAD,    // 已经结束，但还未释放资源
+};
+
 struct co {
-    char state;
-    char name[16];
+    enum co_status state;
+    char* name;
     ucontext_t ucp;
-    ucontext_t ucp_end;
-    ucontext_t ucp_sta;
-    char stack[8192];  // 栈太小会segmentation fault
-    char stack_end[8192];
-    char stack_sta[8192];
+    char stack[STACK_SIZE];  // 栈太小会segmentation fault
+    void (*func)(void *); // co_start 指定的入口地址和参数
+    void *arg;
+    struct co *    waiter;
 };
   
 static struct co* list[128]={0};
@@ -26,9 +34,7 @@ static int next=0;
 static int now=0;
 static int max=0;
 static struct co end;
-
-
-
+  
 void co_end(int i){
     list[i]->state = 0;
     debug("end\n");
@@ -44,53 +50,53 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
         max = next>max?next:max;
     }
 
-    ret->state = 1; // 开始
-    getcontext(&(ret->ucp_end));
-    getcontext(&(ret->ucp));
-    getcontext(&(ret->ucp_sta));
-    ret->ucp_end.uc_stack.ss_sp = ret->stack_end;
-    ret->ucp_end.uc_stack.ss_size = sizeof(ret->stack_end); // 栈大小
-    ret->ucp_end.uc_link = &(ret->ucp_sta);
-    makecontext(&(ret->ucp_end), (void (*)(void))co_end, 1, now);
-    strcpy(ret->name, name);
-    ret->ucp.uc_stack.ss_sp = ret->stack;
+    ret->state = CO_NEW; // 开始
+    ret->name = name;
+    ret->waiter = NULL;
+    ret->func = func;
+    ret->arg = arg;
+    
 
-
-    ret->ucp.uc_stack.ss_size = sizeof(ret->stack); // 栈大小
-    ret->ucp.uc_link = &(ret->ucp_end);
-
-
-    ret->ucp_sta.uc_stack.ss_sp = ret->stack_sta;
-    ret->ucp_sta.uc_stack.ss_size = sizeof(ret->stack_sta); // 栈大小
-    ret->ucp_sta.uc_link = NULL;
-    makecontext(&(ret->ucp), (void (*)(void))func, 1, arg); // 指定待执行的函数入口
-    debug("before set\n");
-    swapcontext(&(ret->ucp_sta), &(ret->ucp));
-    debug("after set\n");
     return ret;
-
 }
 
 void co_wait(struct co *co) {
-    while(NULL!=co && 1==co->state){
+    while(NULL!=co && CO_DEAD!=co->state){
+        list[now]->state = CO_WAITING;
+        co->waiter = list[now];
         co_yield();
     }
     if(NULL!=co){
+        int i;
+        for(i=0; i<128 && list[i]!=co; i++){;}
         free(co);
         co = NULL;
-        list[now]=NULL;
+        list[i]=NULL;
     }    
 }
 
 void co_yield() {
     debug("yield\n");
     int i = rand() % (max+1);
-    while(NULL==list[i] || list[i]->state==0){
+    while(NULL==list[i] || list[i]->state==CO_RUNNING || list[i]->state==CO_NEW){
         i = rand() % (max+1);
     }
     int tmp=now;
     debug("%d, %d, %d\n", now, i, max);
     now = i;
-    swapcontext(&(list[tmp]->ucp), &(list[i]->ucp));
-    list[tmp]->state = 0;
+    getcontext(&(list[now]->ucp));
+    if(list[now]->state==CO_NEW){
+        list[now]->ucp.uc_stack.ss_sp = list[now]->stack;
+        list[now]->ucp.uc_stack.ss_size = sizeof(list[now]->stack); // 栈大小
+        makecontext(&(list[now]->ucp), (void (*)(void))list[now]->func, 1, list[now]->arg); // 指定待执行的函数入口
+        swapcontext(&(list[tmp]->ucp), &(list[i]->ucp));
+        list[now]->state = CO_DEAD;
+        list[now]->waiter->state = CO_RUNNING;
+        co_yield();
+    }
+
+}
+static __attribute__((constructor)) void co_constructor(void) {
+  struct co *current = co_start("main", NULL, NULL);
+  current->status = CO_RUNNING; 
 }
