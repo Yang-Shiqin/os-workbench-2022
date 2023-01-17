@@ -131,22 +131,6 @@ static inline void stack_switch_call(void *sp, void *entry, void *arg) {
 #endif
   );
 }
-/*
- * 从调用的指定函数返回，并恢复相关的寄存器。此时协程执行结束，以后再也不会执行该协程的上下文。这里需要注意的是，其和上面并不是对称的，因为调用协程给了新创建的选中协程的堆栈，则选中协程以后就在自己的堆栈上执行，永远不会返回到调用协程的堆栈。
- */
-static inline void restore_return() {
-  asm volatile(
-#if __x86_64__
-      "movq 0(%%rsp), %%rcx"
-      :
-      :
-#else
-      "movl 4(%%esp), %%ecx"
-      :
-      :
-#endif
-  );
-}
 
 #define __LONG_JUMP_STATUS (1)
 void co_yield () {
@@ -168,7 +152,6 @@ void co_yield () {
       // 栈由高地址向低地址生长
       stack_switch_call(current->stack + STACK_SIZE, current->func, current->arg);
       //恢复相关寄存器
-      restore_return();
 
       //此时协程已经完成执行
       current->status = CO_DEAD;
