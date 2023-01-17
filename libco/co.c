@@ -42,7 +42,7 @@ struct co {
     struct co* waiter;
 };
   
-static struct co* list[128]={0};
+static struct co* list[4]={0};
 static int next=0;
 static int now=0;
 static int max=0;
@@ -84,8 +84,8 @@ void co_yield() {
     int val = setjmp(list[now]->env);
     if(0==val){
         int i = rand() % (max+1);
-        while((NULL==list[i]) || ((list[i]->state!=CO_RUNNING) 
-            && (list[i]->state!=CO_NEW))){
+        while((NULL==list[i]) || 
+        ((list[i]->state!=CO_RUNNING) && (list[i]->state!=CO_NEW))){
             i = rand() % (max+1);
         }
         now = i;

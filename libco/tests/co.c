@@ -36,7 +36,7 @@ struct co {
     enum co_status state;
     const char* name;
     jmp_buf env;
-    char stack[STACK_SIZE];  // 栈太小会segmentation fault
+    unsigned char stack[STACK_SIZE];  // 栈太小会segmentation fault
     void (*func)(void *); // co_start 指定的入口地址和参数
     void *arg;
     struct co* waiter;
@@ -46,11 +46,9 @@ static struct co* list[128]={0};
 static int next=0;
 static int now=0;
 static int max=0;
-static struct co end;
   
 struct co *co_start(const char *name, void (*func)(void *), void *arg) {
-    debug("start\n");
-    struct co* ret = malloc(sizeof(struct co));
+    struct co* ret = (struct co*)malloc(sizeof(struct co));
     list[next] = ret;
     while(NULL!=list[next]){
         next = (next+1)%128;
@@ -74,9 +72,11 @@ void co_wait(struct co *co) {
     if(NULL!=co){
         int i;
         for(i=0; i<128 && list[i]!=co; i++){;}
-        free(co);
-        co = NULL;
-        list[i]=NULL;
+        if(list[i]==co){
+            free(co);
+            co = NULL;
+            list[i]=NULL;
+        }
     }    
 }
 
@@ -84,15 +84,13 @@ void co_yield() {
     int val = setjmp(list[now]->env);
     if(0==val){
         int i = rand() % (max+1);
-        while((NULL==list[i]) || ((list[i]->state!=CO_RUNNING) 
-            && (list[i]->state!=CO_NEW))){
+        while((NULL==list[i]) || 
+        ((list[i]->state!=CO_RUNNING) && (list[i]->state!=CO_NEW))){
             i = rand() % (max+1);
         }
-        // if(i==now) return;
-        int last=now;
         now = i;
         if(list[now]->state==CO_NEW){
-            list[now]->state=CO_RUNNING;
+            ((struct co volatile *)list[now])->state = CO_RUNNING;
             // 寄存器从高向低生长
             stack_switch_call(list[now]->stack+STACK_SIZE, list[now]->func, (uintptr_t)list[now]->arg);   // 切换栈，在自己的栈上运行函数
             // 函数运行完
