@@ -44,7 +44,6 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     debug("start\n");
     struct co* ret = malloc(sizeof(struct co));
     list[next] = ret;
-    now = next;
     while(NULL!=list[next]){
         next = (next+1)%128;
         max = next>max?next:max;
