@@ -73,9 +73,11 @@ void co_wait(struct co *co) {
     if(NULL!=co){
         int i;
         for(i=0; i<128 && list[i]!=co; i++){;}
-        free(co);
-        co = NULL;
-        list[i]=NULL;
+        if(list[i]==co){
+            free(co);
+            co = NULL;
+            list[i]=NULL;
+        }
     }    
 }
 
