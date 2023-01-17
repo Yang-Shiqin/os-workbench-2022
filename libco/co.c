@@ -12,6 +12,18 @@
   
 #define STACK_SIZE 8192
 
+static inline void stack_switch_call(void *sp, void *entry, uintptr_t arg) {
+  asm volatile (
+#if __x86_64__
+    "movq %0, %%rsp; movq %2, %%rdi; jmp *%1"
+      : : "b"((uintptr_t)sp), "d"(entry), "a"(arg) : "memory"
+#else
+    "movl %0, %%esp; movl %2, 4(%0); jmp *%1"
+      : : "b"((uintptr_t)sp - 8), "d"(entry), "a"(arg) : "memory"
+#endif
+  );
+}
+
 enum co_status {
   CO_NEW = 1, // 新创建，还未执行过
   CO_RUNNING, // 已经执行过
@@ -22,11 +34,11 @@ enum co_status {
 struct co {
     enum co_status state;
     const char* name;
-    ucontext_t ucp;
+    jmp_buf env;
     char stack[STACK_SIZE];  // 栈太小会segmentation fault
     void (*func)(void *); // co_start 指定的入口地址和参数
     void *arg;
-    struct co *    waiter;
+    struct co* waiter;
 };
   
 static struct co* list[128]={0};
@@ -34,11 +46,6 @@ static int next=0;
 static int now=0;
 static int max=0;
 static struct co end;
-  
-void co_end(int i){
-    list[i]->state = 0;
-    debug("end\n");
-}
   
 struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     debug("start\n");
@@ -54,8 +61,6 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     ret->waiter = NULL;
     ret->func = func;
     ret->arg = arg;
-    
-
     return ret;
 }
 
@@ -75,30 +80,29 @@ void co_wait(struct co *co) {
 }
 
 void co_yield() {
-    int i = rand() % (max+1);
-    while((NULL==list[i]) || ((list[i]->state!=CO_RUNNING) 
-        && (list[i]->state!=CO_NEW))){
-        i = rand() % (max+1);
+    int val = setjmp(list[now]->env);
+    if(0==val){
+        int i = rand() % (max+1);
+        while((NULL==list[i]) || ((list[i]->state!=CO_RUNNING) 
+            && (list[i]->state!=CO_NEW))){
+            i = rand() % (max+1);
+        }
+        if(i==now) return;
+        int last=now;
+        now = i;
+        if(list[now]->state==CO_NEW){
+            list[now]->state=CO_RUNNING;
+            stack_switch_call(list[now]->stack, list[now]->func, list[now]->arg);   // 切换栈，在自己的栈上运行函数
+            // 函数运行完
+            list[now]->state = CO_DEAD;
+            if(list[now]->waiter)
+                list[now]->waiter->state = CO_RUNNING;
+        }else{
+            longjmp(list[now]->env, 1);
+        }
     }
-    if(i==now) return;
-    int last=now;
-    debug("%d, %d, %d, %s, %d, %s\n", now, i, max, list[i]->name, list[i]->state, (char*)list[i]->arg);
-    now = i;
-    if(list[now]->state==CO_NEW){
-        list[now]->state=CO_RUNNING;
-        getcontext(&(list[now]->ucp));
-        list[now]->ucp.uc_stack.ss_sp = list[now]->stack;
-        list[now]->ucp.uc_stack.ss_size = sizeof(list[now]->stack); // 栈大小
-        makecontext(&(list[now]->ucp), (void (*)(void))list[now]->func, 1, list[now]->arg); // 指定待执行的函数入口
-        setcontext(&(list[now]->ucp));
-        list[now]->state = CO_DEAD;
-        if(list[now]->waiter)
-            list[now]->waiter->state = CO_RUNNING;
-    }else{
-        setcontext(&(list[now]->ucp));
-    }
-    getcontext(&(list[last]->ucp));
 }
+
 static __attribute__((constructor)) void co_constructor(void) {
   struct co *current = co_start("main", NULL, NULL);
   current->state = CO_RUNNING; 
