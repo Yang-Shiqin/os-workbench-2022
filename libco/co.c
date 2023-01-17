@@ -11,7 +11,7 @@
   #define debug()
 #endif
   
-#define STACK_SIZE (8192*8)
+#define STACK_SIZE 8192
 
 static inline void stack_switch_call(void *sp, void *entry, uintptr_t arg) {
   asm volatile (
@@ -36,7 +36,7 @@ struct co {
     enum co_status state;
     const char* name;
     jmp_buf env;
-    char stack[STACK_SIZE];  // 栈太小会segmentation fault
+    unsigned char stack[STACK_SIZE];  // 栈太小会segmentation fault
     void (*func)(void *); // co_start 指定的入口地址和参数
     void *arg;
     struct co* waiter;
