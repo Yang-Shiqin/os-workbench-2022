@@ -93,7 +93,7 @@ void co_yield() {
         now = i;
         if(list[now]->state==CO_NEW){
             list[now]->state=CO_RUNNING;
-            stack_switch_call(list[now]->stack, list[now]->func, list[now]->arg);   // 切换栈，在自己的栈上运行函数
+            stack_switch_call(list[now]->stack, list[now]->func, (uintptr_t)list[now]->arg);   // 切换栈，在自己的栈上运行函数
             // 函数运行完
             list[now]->state = CO_DEAD;
             if(list[now]->waiter)
