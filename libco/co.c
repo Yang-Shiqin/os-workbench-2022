@@ -83,8 +83,8 @@ void co_yield() {
     if(i==now) return;
     int last=now;
     debug("%d, %d, %d, %s, %d, %s\n", now, i, max, list[i]->name, list[i]->state, (char*)list[i]->arg);
-    now = i;
     getcontext(&(list[last]->ucp));
+    now = i;
     if(list[now]->state==CO_NEW){
         list[now]->state=CO_RUNNING;
         getcontext(&(list[now]->ucp));
