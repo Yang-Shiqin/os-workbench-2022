@@ -107,8 +107,8 @@ void co_yield() {
 }
 
 static __attribute__((constructor)) void co_constructor(void) {
-    struct co *current = co_start("main", NULL, NULL);
-    current->state = CO_RUNNING;
+    list[now] = co_start("main", NULL, NULL);
+    list[now]->status = CO_RUNNING;
 }
 
 static __attribute__((destructor)) void co_destructor(void) {
