@@ -75,7 +75,7 @@ void co_wait(struct co *co) {
 }
 
 void co_yield() {
-    getcontext(&(list[now]->ucp));
+    // getcontext(&(list[now]->ucp));
     debug("yield\n");
     int i = rand() % (max+1);
     while((NULL==list[i]) || ((list[i]->state!=CO_RUNNING) 
