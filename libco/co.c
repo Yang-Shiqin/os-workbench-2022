@@ -11,7 +11,7 @@
   #define debug()
 #endif
   
-#define STACK_SIZE 8192
+#define STACK_SIZE 8192*2
 
 static inline void stack_switch_call(void *sp, void *entry, uintptr_t arg) {
   asm volatile (
