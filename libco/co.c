@@ -14,14 +14,14 @@
 #define STACK_SIZE 8192
 #define LIST_SIZE 128
 
-static inline void stack_switch_call(void *sp, void *entry, uintptr_t arg) {
+static inline void stack_switch_call(void *sp, void *entry, void* arg) {
   asm volatile (
 #if __x86_64__
     "movq %0, %%rsp; movq %2, %%rdi; jmp *%1"
-      : : "b"((uintptr_t)sp-16), "d"(entry), "a"(arg) : "memory"
+      : : "b"((uintptr_t)sp), "d"(entry), "a"((uintptr_t)arg) : "memory"
 #else
     "movl %0, %%esp; movl %2, 4(%0); jmp *%1"
-      : : "b"((uintptr_t)sp - 8), "d"(entry), "a"(arg) : "memory"
+      : : "b"((uintptr_t)sp - 8), "d"(entry), "a"((uintptr_t)arg) : "memory"
 #endif
   );
 }
@@ -36,7 +36,6 @@ enum co_status {
 struct co {
     const char* name;
     void (*func)(void *); // co_start 指定的入口地址和参数
-    void *tmp;
     void *arg;
     enum co_status state;
     struct co* waiter;
@@ -62,7 +61,6 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     ret->waiter = NULL;
     ret->func = func;
     ret->arg = arg;
-    ret->tmp = NULL;
     return ret;
 }
 
@@ -95,7 +93,7 @@ void co_yield() {
         if(list[now]->state==CO_NEW){
             ((struct co volatile *)list[now])->state = CO_RUNNING;
             // 寄存器从高向低生长
-            stack_switch_call(list[now]->stack+STACK_SIZE, list[now]->func, (uintptr_t)list[now]->arg);   // 切换栈，在自己的栈上运行函数
+            stack_switch_call(list[now]->stack+STACK_SIZE, list[now]->func, list[now]->arg);   // 切换栈，在自己的栈上运行函数
             // 函数运行完
             list[now]->state = CO_DEAD;
             if(list[now]->waiter)
