@@ -69,15 +69,15 @@ void co_wait(struct co *co) {
         co->waiter = list[now];
         co_yield();
     }
-    // if(NULL!=co){
-    //     int i;
-    //     for(i=0; i<128 && list[i]!=co; i++){;}
-    //     if(list[i]==co){
-    //         free(co);
-    //         co = NULL;
-    //         list[i]=NULL;
-    //     }
-    // }    
+    if(NULL!=co){
+        int i;
+        for(i=0; i<128 && list[i]!=co; i++){;}
+        if(list[i]==co){
+            free(co);
+            co = NULL;
+            list[i]=NULL;
+        }
+    }    
 }
 
 void co_yield() {
