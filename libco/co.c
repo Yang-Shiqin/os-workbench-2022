@@ -90,12 +90,12 @@ void co_yield() {
         list[now]->ucp.uc_stack.ss_sp = list[now]->stack;
         list[now]->ucp.uc_stack.ss_size = sizeof(list[now]->stack); // 栈大小
         makecontext(&(list[now]->ucp), (void (*)(void))list[now]->func, 1, list[now]->arg); // 指定待执行的函数入口
-        swapcontext(&(list[tmp]->ucp), &(list[i]->ucp));
+        swapcontext(&(list[tmp]->ucp), &(list[now]->ucp));
         list[now]->state = CO_DEAD;
         list[now]->waiter->state = CO_RUNNING;
         co_yield();
     }else{
-        swapcontext(&(list[tmp]->ucp), &(list[i]->ucp));
+        swapcontext(&(list[tmp]->ucp), &(list[now]->ucp));
     }
 
 }
