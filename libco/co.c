@@ -12,6 +12,7 @@
 #endif
   
 #define STACK_SIZE 8192
+#define LIST_SIZE 4
 
 static inline void stack_switch_call(void *sp, void *entry, uintptr_t arg) {
   asm volatile (
@@ -42,7 +43,7 @@ struct co {
     struct co* waiter;
 };
   
-static struct co* list[4]={0};
+static struct co* list[LIST_SIZE]={0};
 static int next=0;
 static int now=0;
 static int max=0;
@@ -51,7 +52,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     struct co* ret = (struct co*)malloc(sizeof(struct co));
     list[next] = ret;
     while(NULL!=list[next]){
-        next = (next+1)%128;
+        next = (next+1)%LIST_SIZE;
         max = next>max?next:max;
     }
 
@@ -71,7 +72,7 @@ void co_wait(struct co *co) {
     }
     if(NULL!=co){
         int i;
-        for(i=0; i<128 && list[i]!=co; i++){;}
+        for(i=0; i<LIST_SIZE && list[i]!=co; i++){;}
         if(list[i]==co){
             free(co);
             co = NULL;
@@ -111,7 +112,7 @@ static __attribute__((constructor)) void co_constructor(void) {
 
 static __attribute__((destructor)) void co_destructor(void) {
     int i;
-    for(i=0; i<128; i++){
+    for(i=0; i<LIST_SIZE; i++){
         if(list[i]!=NULL){
             free(list[i]);
             list[i]=NULL;
