@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <setjmp.h>
+#include <stdint.h>
   
 #ifndef LOCAL_MACHINE
   #define debug(...) printf(__VA_ARGS__)
