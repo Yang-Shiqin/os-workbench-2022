@@ -106,6 +106,16 @@ void co_yield() {
 }
 
 static __attribute__((constructor)) void co_constructor(void) {
-  struct co *current = co_start("main", NULL, NULL);
-  current->state = CO_RUNNING; 
+    struct co *current = co_start("main", NULL, NULL);
+    current->state = CO_RUNNING; 
+}
+
+static __attribute__((destructor)) void co_destructor(void) {
+    int i;
+    for(i=0; i<128; i++){
+        if(list[i]!=NULL){
+            free(list[i]);
+            list[i]=NULL;
+        }
+    }
 }
