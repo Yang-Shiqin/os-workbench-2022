@@ -11,7 +11,7 @@
   #define debug()
 #endif
   
-#define STACK_SIZE 8192*16
+#define STACK_SIZE 8192
 #define LIST_SIZE 128
 
 static inline void stack_switch_call(void *sp, void *entry, uintptr_t arg) {
@@ -34,11 +34,11 @@ enum co_status {
 };
 
 struct co {
-    enum co_status state;
     const char* name;
+    enum co_status state;
     void (*func)(void *); // co_start 指定的入口地址和参数
-    uintptr_t arg;
     unsigned char stack[STACK_SIZE];  // 栈太小会segmentation fault
+    void *arg;
     struct co* waiter;
     jmp_buf env;
 };
@@ -60,7 +60,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     ret->name = name;
     ret->waiter = NULL;
     ret->func = func;
-    ret->arg = (uintptr_t)arg;
+    ret->arg = arg;
     return ret;
 }
 
