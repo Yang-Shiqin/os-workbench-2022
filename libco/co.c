@@ -89,11 +89,9 @@ void co_yield() {
             && (list[i]->state!=CO_NEW))){
             i = rand() % (max+1);
         }
-        // if(i==now) return;
-        int last=now;
         now = i;
         if(list[now]->state==CO_NEW){
-            list[now]->state=CO_RUNNING;
+            ((struct co volatile *)list[now])->state=CO_RUNNING;
             // 寄存器从高向低生长
             stack_switch_call(list[now]->stack+STACK_SIZE, list[now]->func, (uintptr_t)list[now]->arg);   // 切换栈，在自己的栈上运行函数
             // 函数运行完
