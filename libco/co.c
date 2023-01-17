@@ -21,7 +21,7 @@ enum co_status {
 
 struct co {
     enum co_status state;
-    char* name;
+    const char* name;
     ucontext_t ucp;
     char stack[STACK_SIZE];  // 栈太小会segmentation fault
     void (*func)(void *); // co_start 指定的入口地址和参数
@@ -98,5 +98,5 @@ void co_yield() {
 }
 static __attribute__((constructor)) void co_constructor(void) {
   struct co *current = co_start("main", NULL, NULL);
-  current->status = CO_RUNNING; 
+  current->state = CO_RUNNING; 
 }
