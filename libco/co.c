@@ -18,7 +18,7 @@ static inline void stack_switch_call(void *sp, void *entry, uintptr_t arg) {
   asm volatile (
 #if __x86_64__
     "movq %0, %%rsp; movq %2, %%rdi; jmp *%1"
-      : : "b"((uintptr_t)sp - 16), "d"(entry), "a"(arg) : "memory"
+      : : "b"((uintptr_t)sp - 16*8), "d"(entry), "a"(arg) : "memory"
 #else
     "movl %0, %%esp; movl %2, 4(%0); jmp *%1"
       : : "b"((uintptr_t)sp - 8), "d"(entry), "a"(arg) : "memory"
@@ -37,8 +37,8 @@ struct co {
     enum co_status state;
     const char* name;
     void (*func)(void *); // co_start 指定的入口地址和参数
-    unsigned char stack[STACK_SIZE];  // 栈太小会segmentation fault
     void *arg;
+    unsigned char stack[STACK_SIZE];  // 栈太小会segmentation fault
     struct co* waiter;
     jmp_buf env;
 };
