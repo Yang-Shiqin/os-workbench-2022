@@ -42,7 +42,7 @@ struct co {
     struct co* waiter;
 };
   
-static struct co* list[256]={0};
+static struct co* list[128]={0};
 static int next=0;
 static int now=0;
 static int max=0;
@@ -69,15 +69,15 @@ void co_wait(struct co *co) {
         co->waiter = list[now];
         co_yield();
     }
-    if(NULL!=co){
-        int i;
-        for(i=0; i<128 && list[i]!=co; i++){;}
-        if(list[i]==co){
-            free(co);
-            co = NULL;
-            list[i]=NULL;
-        }
-    }    
+    // if(NULL!=co){
+    //     int i;
+    //     for(i=0; i<128 && list[i]!=co; i++){;}
+    //     if(list[i]==co){
+    //         free(co);
+    //         co = NULL;
+    //         list[i]=NULL;
+    //     }
+    // }    
 }
 
 void co_yield() {
