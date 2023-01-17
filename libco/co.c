@@ -27,7 +27,7 @@
 /*
  * 切换栈，即让选中协程的所有堆栈信息在自己的堆栈中，而非调用者的堆栈。保存调用者需要保存的寄存器，并调用指定的函数
  */
-static inline void stack_switch_call(void *sp, void *entry, void *arg) {
+static inline void stack_switch_call(void *sp, void *entry, uintptr_t *arg) {
   asm volatile(
 #if __x86_64__
       "movq %%rcx, 0(%0); movq %0, %%rsp; movq %2, %%rdi; call *%1"
