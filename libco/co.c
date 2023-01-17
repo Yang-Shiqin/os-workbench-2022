@@ -12,7 +12,7 @@
 #endif
   
 #define STACK_SIZE 8192
-#define LIST_SIZE 4
+#define LIST_SIZE 128
 
 static inline void stack_switch_call(void *sp, void *entry, uintptr_t arg) {
   asm volatile (
@@ -37,10 +37,10 @@ struct co {
     enum co_status state;
     const char* name;
     jmp_buf env;
-    unsigned char stack[STACK_SIZE];  // 栈太小会segmentation fault
     void (*func)(void *); // co_start 指定的入口地址和参数
     void *arg;
     struct co* waiter;
+    unsigned char stack[STACK_SIZE];  // 栈太小会segmentation fault
 };
   
 static struct co* list[LIST_SIZE]={0};
@@ -70,15 +70,15 @@ void co_wait(struct co *co) {
         co->waiter = list[now];
         co_yield();
     }
-    if(NULL!=co){
-        int i;
-        for(i=0; i<LIST_SIZE && list[i]!=co; i++){;}
-        if(list[i]==co){
-            free(co);
-            co = NULL;
-            list[i]=NULL;
-        }
-    }    
+    // if(NULL!=co){
+    //     int i;
+    //     for(i=0; i<LIST_SIZE && list[i]!=co; i++){;}
+    //     if(list[i]==co){
+    //         free(co);
+    //         co = NULL;
+    //         list[i]=NULL;
+    //     }
+    // }    
 }
 
 void co_yield() {
