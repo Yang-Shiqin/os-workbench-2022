@@ -93,6 +93,7 @@ proc* gen_sorted_pstree(){
         char str[256] = {0};
         char *tmp_str=NULL;
         fgets(str, 255, fp);
+        fclose(fp);
         tmp_str = strtok(str, " ");
         tmp_str = strtok(NULL, " ");
         tmp_str[strlen(tmp_str)-1] = 0;
