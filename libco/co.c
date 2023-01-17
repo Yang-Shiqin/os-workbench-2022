@@ -97,8 +97,6 @@ void co_yield() {
             list[now]->waiter->state = CO_RUNNING;
         co_yield();
     }else{
-        // setcontext(&(list[now]->ucp));
-        
     }
 
 }
