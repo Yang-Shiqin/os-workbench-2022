@@ -84,7 +84,6 @@ void co_yield() {
     int last=now;
     debug("%d, %d, %d, %s, %d, %s\n", now, i, max, list[i]->name, list[i]->state, (char*)list[i]->arg);
     now = i;
-    getcontext(&(list[last]->ucp));
     if(list[now]->state==CO_NEW){
         list[now]->state=CO_RUNNING;
         getcontext(&(list[now]->ucp));
@@ -99,6 +98,7 @@ void co_yield() {
     }else{
         setcontext(&(list[now]->ucp));
     }
+    getcontext(&(list[last]->ucp));
 
 }
 static __attribute__((constructor)) void co_constructor(void) {
