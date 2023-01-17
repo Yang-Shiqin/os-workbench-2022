@@ -94,12 +94,10 @@ void co_yield() {
         list[now]->state = CO_DEAD;
         if(list[now]->waiter)
             list[now]->waiter->state = CO_RUNNING;
-        co_yield();
     }else{
         setcontext(&(list[now]->ucp));
     }
     getcontext(&(list[last]->ucp));
-
 }
 static __attribute__((constructor)) void co_constructor(void) {
   struct co *current = co_start("main", NULL, NULL);
