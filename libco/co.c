@@ -95,7 +95,7 @@ void co_yield() {
         list[now]->state = CO_DEAD;
         if(list[now]->waiter)
             list[now]->waiter->state = CO_RUNNING;
-        // co_yield();
+        co_yield();
     }else{
     }
 
