@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include <assert.h>
 #include <setjmp.h>
 #include <stdint.h>
 
@@ -21,7 +20,7 @@ static inline void stack_switch_call(void *sp, void *entry, void * arg) {
     "movq %0, %%rsp; movq %2, %%rdi; call *%1"
       : : "b"((uintptr_t)sp), "d"((uintptr_t)entry), "a"((uintptr_t)arg) : "memory"
 #else
-    "movl %0, %%esp; movl %2, 4(%0); jmp *%1"
+    "movl %0, %%esp; movl %2, 4(%0); call *%1"
       : : "b"((uintptr_t)sp - 8), "d"((uintptr_t)entry), "a"((uintptr_t)arg) : "memory"
 #endif
   );
@@ -66,20 +65,20 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
 }
 
 void co_wait(struct co *co) {
-    assert(co);
-
-    if(CO_DEAD!=co->state){
+    while(NULL!=co && CO_DEAD!=co->state){
         list[now]->state = CO_WAITING;
         co->waiter = list[now];
         co_yield();
     }
-    int i;
-    for(i=0; i<LIST_SIZE && list[i]!=co; i++){;}
-    if(list[i]==co){
-        free(co);
-        co = NULL;
-        list[i]=NULL;
-    }
+    // if(NULL!=co){
+    //     int i;
+    //     for(i=0; i<LIST_SIZE && list[i]!=co; i++){;}
+    //     if(list[i]==co){
+    //         free(co);
+    //         co = NULL;
+    //         list[i]=NULL;
+    //     }
+    // }
 }
 
 void co_yield() {
@@ -107,8 +106,8 @@ void co_yield() {
 }
 
 static __attribute__((constructor)) void co_constructor(void) {
-    list[now] = co_start("main", NULL, NULL);
-    list[now]->state = CO_RUNNING;
+    struct co *current = co_start("main", NULL, NULL);
+    current->state = CO_RUNNING;
 }
 
 static __attribute__((destructor)) void co_destructor(void) {
