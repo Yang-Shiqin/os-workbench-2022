@@ -1,8 +1,8 @@
 #include "co.h"
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 #include <stdio.h>
+#include <assert.h>
 #include <setjmp.h>
 #include <stdint.h>
 
@@ -50,26 +50,25 @@ static int now=0;
 static int max=0;
 
 struct co *co_start(const char *name, void (*func)(void *), void *arg) {
-  struct co *coroutine = (struct co *)malloc(sizeof(struct co));
-  assert(coroutine);
-
-  coroutine->name = name;
-  coroutine->func = func;
-  coroutine->arg = arg;
-  coroutine->state = CO_NEW;
-  coroutine->waiter = NULL;
-
-    list[next] = coroutine;
+    struct co* ret = (struct co*)malloc(sizeof(struct co));
+    list[next] = ret;
     while(NULL!=list[next]){
         next = (next+1)%LIST_SIZE;
         max = next>max?next:max;
     }
-  return coroutine;
+
+    ret->state = CO_NEW; // 开始
+    ret->name = name;
+    ret->waiter = NULL;
+    ret->func = func;
+    ret->arg = arg;
+    return ret;
 }
 
 void co_wait(struct co *co) {
-    // todo
-    while(CO_DEAD!=co->state){
+    assert(co);
+
+    if(CO_DEAD!=co->state){
         list[now]->state = CO_WAITING;
         co->waiter = list[now];
         co_yield();
