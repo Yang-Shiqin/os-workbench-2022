@@ -95,6 +95,7 @@ void co_yield() {
         list[now]->waiter->state = CO_RUNNING;
         co_yield();
     }else{
+        debug("run ");
         swapcontext(&(list[tmp]->ucp), &(list[now]->ucp));
     }
 
