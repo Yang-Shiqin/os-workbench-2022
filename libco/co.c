@@ -36,11 +36,11 @@ enum co_status {
 struct co {
     const char* name;
     enum co_status state;
+    struct co* waiter;
+    jmp_buf env;
     void (*func)(void *); // co_start 指定的入口地址和参数
     void *arg;
     unsigned char stack[STACK_SIZE];  // 栈太小会segmentation fault
-    struct co* waiter;
-    jmp_buf env;
 };
   
 static struct co* list[LIST_SIZE]={0};
