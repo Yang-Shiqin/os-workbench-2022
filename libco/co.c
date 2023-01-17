@@ -84,8 +84,8 @@ void co_yield() {
     int tmp=now;
     debug("%d, %d, %d, %s\n", now, i, max, list[i]->name);
     now = i;
-    getcontext(&(list[now]->ucp));
     if(list[now]->state==CO_NEW){
+        getcontext(&(list[now]->ucp));
         list[now]->state=CO_RUNNING;
         list[now]->ucp.uc_stack.ss_sp = list[now]->stack;
         list[now]->ucp.uc_stack.ss_size = sizeof(list[now]->stack); // 栈大小
@@ -96,9 +96,6 @@ void co_yield() {
         co_yield();
     }else{
         swapcontext(&(list[tmp]->ucp), &(list[now]->ucp));
-        list[now]->state = CO_DEAD;
-        list[now]->waiter->state = CO_RUNNING;
-        co_yield();
     }
 
 }
