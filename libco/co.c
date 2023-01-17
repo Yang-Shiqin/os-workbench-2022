@@ -7,6 +7,9 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#define STACK_SIZE 8192
+#define LIST_SIZE 128
+
 struct co *current;
 
 enum co_status {
@@ -15,9 +18,6 @@ enum co_status {
   CO_WAITING,  // 在 co_wait 上等待
   CO_DEAD,     // 已经结束，但还未释放资源
 };
-
-#define K 1024
-#define STACK_SIZE (64 * K)
 
 struct co {
   const char *name;
