@@ -76,14 +76,13 @@ void co_wait(struct co *co) {
 
 void co_yield() {
     getcontext(&(list[now]->ucp));
-    debug("yield\n");
     int i = rand() % (max+1);
     while((NULL==list[i]) || ((list[i]->state!=CO_RUNNING) 
         && (list[i]->state!=CO_NEW))){
         i = rand() % (max+1);
     }
     int last=now;
-    debug("%d, %d, %d, %s, %d\n", now, i, max, list[i]->name, list[i]->state);
+    debug("%d, %d, %d, %s, %d, %s\n", now, i, max, list[i]->name, list[i]->state, (char*)list[i]->arg);
     now = i;
     if(list[now]->state==CO_NEW){
         list[now]->state=CO_RUNNING;
@@ -98,8 +97,6 @@ void co_yield() {
             list[now]->waiter->state = CO_RUNNING;
         co_yield();
     }else{
-        setcontext(&(list[now]->ucp));
-        
     }
 
 }
