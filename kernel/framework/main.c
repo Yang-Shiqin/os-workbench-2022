@@ -8,6 +8,10 @@ typedef struct Header {
 void stress_test() {
   void *ptr = pmm->alloc(66);
   Header* h = ptr-sizeof(Header);
+  int i;
+  for (i=0; i<4; i++){
+    printf("%x\n", (uintptr_t)h+4*i);
+  }
   printf("%d %x %p\n", h->size, ((int*)(h->magic))[1], ptr);
   ptr = pmm->alloc(12996);
   h = ptr-sizeof(Header);
