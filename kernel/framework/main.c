@@ -10,7 +10,7 @@ void stress_test() {
   Header* h = ptr-sizeof(Header);
   int i;
   for (i=0; i<4; i++){
-    printf("%x\n", (uintptr_t)h+4*i);
+    printf("%x\n", (uintptr_t)h+i);
   }
   printf("%d %x %p\n", h->size, ((int*)(h->magic))[1], ptr);
   ptr = pmm->alloc(12996);
