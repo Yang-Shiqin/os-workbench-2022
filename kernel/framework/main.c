@@ -8,7 +8,7 @@ typedef struct Header {
 void stress_test() {
                 void *ptr = pmm->alloc(30);
                 Header* h = ptr-sizeof(Header);
-                printf("%d %x\n", h->size, h->magic);
+                printf("%d %x %d\n", h->size, h->magic, sizeof(Header));
 
     // while (1) {
     //     // 根据 workload 生成操作
