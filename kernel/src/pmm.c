@@ -11,7 +11,7 @@ typedef struct FreeNode {
 // 头块(大小和节点一样, 方便相互转换), 大小为8字节
 typedef struct Header { 
 	size_t size; // Block size, 不加头
-	int magic; // canary, 0xfdfdfdfd为正常
+	void* magic; // canary, 0xfdfdfdfd为正常
 } Header;
 
 // 伙伴系统分配器数组
@@ -50,7 +50,7 @@ static void *kalloc(size_t size) {
     }
     res = (Header*)free_block;
     res->size = (1<<(i+1))-sizeof(Header);
-    res->magic = 0xfdfdfdfd;
+    memset(res->magic, 0xfd, sizeof(res->magic));
     return (void*)((uintptr_t)res+sizeof(Header));
   }
   return NULL;    // 内存不够
