@@ -9,6 +9,15 @@ void stress_test() {
   void *ptr = pmm->alloc(66);
   Header* h = ptr-sizeof(Header);
   printf("%d %x %d\n", h->size, ((int*)(h->magic))[1], sizeof(void*));
+  ptr = pmm->alloc(12996);
+  h = ptr-sizeof(Header);
+  printf("%d %x %d\n", h->size, ((int*)(h->magic))[1], sizeof(void*));
+  ptr = pmm->alloc(62326);
+  h = ptr-sizeof(Header);
+  printf("%d %x %d\n", h->size, ((int*)(h->magic))[1], sizeof(void*));
+  ptr = pmm->alloc(6126);
+  h = ptr-sizeof(Header);
+  printf("%d %x %d\n", h->size, ((int*)(h->magic))[1], sizeof(void*));
 }
 
 int main() {
