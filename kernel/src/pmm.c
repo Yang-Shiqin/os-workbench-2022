@@ -22,6 +22,7 @@ typedef struct Buddy {
 } Buddy;
 
 static void *kalloc(size_t size) {
+  printf("call kalloc\n");
   size_t total_size = size+sizeof(Header);
   size_t head=0, tail=0, i=0;
   FreeNode *mid = NULL;
