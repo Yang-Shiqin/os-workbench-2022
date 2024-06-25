@@ -1,0 +1,25 @@
+Comparing 'Hello, world!' and 'Hello, world!': 0
+Comparing 'Aello, world!' and 'Bello, world!': -1
+Comparing 'Zello, world!' and 'Aello, world!': 25
+Comparing '' and '': 0
+Comparing 'Hello' and 'Hello, world!': -44
+Comparing 'Hello, world!' and 'Hello, world!' 3: 0
+Comparing 'Hello, world!' and 'Hello, world!' 0: 0
+Comparing 'Aello, world!' and 'Bello, world!' 3: -1
+Comparing 'Aello, world!' and 'Bello, world!' 0: 0
+Comparing 'Zello, world!' and 'Aello, world!' 3: 25
+Comparing 'Zello' and 'Zello' 8: 0
+Comparing '' and '' 3: 0
+Comparing 'Hel' and 'Hello, world!' 2: 0
+Comparing 'Hel' and 'Hello, world!' 3: 0
+Comparing 'Hel' and 'Hello, world!' 4: -108
+Comparing 'Hel' and 'Hello, world!' 5: -108
+Integer: 123456
+Character: A
+String: Hello, world!
+%
+Newline:
+Tab:	This is a tab.
+Backslash: \
+Invalid conversion: 65
+Missing argument: 123456 0

@@ -1,0 +1,2 @@
+# Building test-run [x86_64-qemu]
++ CC test.c

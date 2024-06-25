@@ -87,6 +87,7 @@ static void kfree(void *ptr) {
         }else{
           prev->next = pnode->next;
         }
+        // 释放index锁
         ptr = (void*)MIN((uintptr_t)ptr, (uintptr_t)friend);
         free_block = (FreeNode*)((uintptr_t)ptr-sizeof(Header));
         index++;
@@ -98,8 +99,10 @@ static void kfree(void *ptr) {
     }
     flag = 0;
   }
+  // 申请index锁
   free_block->next = free_area[index].head;
   free_area[index].head = free_block;
+  // 释放index锁
 }
 
 static void pmm_init() {
