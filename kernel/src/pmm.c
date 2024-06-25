@@ -50,7 +50,7 @@ static void *kalloc(size_t size) {
     }
     res = (Header*)free_block;
     res->size = (1<<(i+1))-sizeof(Header);
-    memset(res->magic, 0xfd, sizeof(res->magic));
+    memset(res->magic, 0xfd, sizeof(void*));
     return (void*)((uintptr_t)res+sizeof(Header));
   }
   return NULL;    // 内存不够
