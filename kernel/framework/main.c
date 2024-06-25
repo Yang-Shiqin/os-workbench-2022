@@ -8,7 +8,8 @@ typedef struct Header {
 void stress_test() {
   void *ptr = pmm->alloc(32);
   Header* h = ptr-sizeof(Header);
-  printf("%d %x %d\n", h->size, ((int*)(h->magic))[1], sizeof(void*));
+  printf("%d %x %d\n", h->size, h->magic, sizeof(void*));
+  // printf("%d %x %d\n", h->size, ((int*)(h->magic))[1], sizeof(void*));
 }
 
 int main() {
