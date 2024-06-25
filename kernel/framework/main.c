@@ -5,7 +5,7 @@ typedef struct Header {
 	void* magic; // canary, 0xfdfdfdfd为正常
 } Header;
 
-void stress_test() {
+void stress_test() {  
   void *ptr = pmm->alloc(66);
   Header* h = ptr-sizeof(Header);
   int i;
