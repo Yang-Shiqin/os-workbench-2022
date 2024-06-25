@@ -50,7 +50,7 @@ static void *kalloc(size_t size) {
     }
     res = (Header*)free_block;
     res->size = (1<<(i+1))-sizeof(Header);
-    memset(res->magic, 0xfd, sizeof(void*));
+    memset(&(res->magic), 0xfd, sizeof(void*));
     return (void*)((uintptr_t)res+sizeof(Header));
   }
   return NULL;    // 内存不够
@@ -58,6 +58,26 @@ static void *kalloc(size_t size) {
 
 static void kfree(void *ptr) {
   // 放对应大小的链表里，遍历，有相邻的合并
+  // Buddy *free_area = (Buddy*)heap.start;
+  // size_t index = 0;
+  // Header *mem_to_free = (uintptr_t)ptr-sizeof(Header);
+  // void *magic = NULL;
+  // memset(&magic, 0xfd, sizeof(void*));
+  // assert(memcmp(&magic, )==0);
+  // FreeNode *free_block = (FreeNode*)mem_to_free;  // 待释放的内存
+  // FreeNode *pnode = NULL;  // 要合并的空闲内存
+  // size_t total_size = free_block->size+sizeof(Header);
+  // while((1<<index)<total_size) index++;
+  // assert((1<<index)==total_size);
+  // // while升级没失败
+  // // 申请index的锁
+  // ptr ^ (1<<index);
+  // pnode = free_area[index].head;
+
+  // while(pnode){
+  //   pnode = pnode->next;
+  // }
+  // Header *res = NULL;
 }
 
 static void pmm_init() {
