@@ -1,5 +1,7 @@
 #include <common.h>
 
+#define MIN(a, b) ((a)<(b)?(a):(b))
+
 #define MAX_ORDER 28           // 800最大是28
 // 空闲链表节点
 typedef struct FreeNode { 
@@ -58,26 +60,46 @@ static void *kalloc(size_t size) {
 
 static void kfree(void *ptr) {
   // 放对应大小的链表里，遍历，有相邻的合并
-  // Buddy *free_area = (Buddy*)heap.start;
-  // size_t index = 0;
-  // Header *mem_to_free = (uintptr_t)ptr-sizeof(Header);
-  // void *magic = NULL;
-  // memset(&magic, 0xfd, sizeof(void*));
-  // assert(memcmp(&magic, )==0);
-  // FreeNode *free_block = (FreeNode*)mem_to_free;  // 待释放的内存
-  // FreeNode *pnode = NULL;  // 要合并的空闲内存
-  // size_t total_size = free_block->size+sizeof(Header);
-  // while((1<<index)<total_size) index++;
-  // assert((1<<index)==total_size);
-  // // while升级没失败
-  // // 申请index的锁
-  // ptr ^ (1<<index);
-  // pnode = free_area[index].head;
+  Buddy *free_area = (Buddy*)heap.start;
+  size_t index = 0;
+  Header *mem_to_free = (Header *)((uintptr_t)ptr-sizeof(Header));
+  void *magic = NULL;
+  memset(&magic, 0xfd, sizeof(void*));
+  assert(memcmp(&magic, &(mem_to_free->magic), sizeof(void*))==0); // magic被人改了就完了
+  FreeNode *free_block = (FreeNode*)mem_to_free;    // 待释放的内存
+  FreeNode *pnode = NULL;   // 
+  FreeNode *prev = NULL;
+  FreeNode *friend = NULL;  // 伙伴, 即要合并的空闲内存
+  size_t total_size = free_block->size+sizeof(Header);
+  while((1<<index)<total_size) index++;
+  assert((1<<index)==total_size);   // 要是2的指数次
 
-  // while(pnode){
-  //   pnode = pnode->next;
-  // }
-  // Header *res = NULL;
+  int flag=1;  // 升级没失败
+  while (flag){
+    // 申请index的锁
+    friend = (FreeNode*)((uintptr_t)ptr ^ (uintptr_t)(1<<index));   // 寻找伙伴
+    pnode = free_area[index].head;
+    prev = NULL;
+    while(pnode){
+      if ((uintptr_t)pnode+sizeof(Header)==(uintptr_t)friend){
+        if (prev==NULL){
+          free_area[index].head = pnode->next;
+        }else{
+          prev->next = pnode->next;
+        }
+        ptr = (void*)MIN((uintptr_t)ptr, (uintptr_t)friend);
+        free_block = (FreeNode*)((uintptr_t)ptr-sizeof(Header));
+        index++;
+        free_block->size = (1<<index)-sizeof(Header);
+        break;
+      }
+      prev = pnode;
+      pnode = pnode->next;
+    }
+    flag = 0;
+  }
+  free_block->next = free_area[index].head;
+  free_area[index].head = free_block;
 }
 
 static void pmm_init() {
