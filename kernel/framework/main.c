@@ -12,16 +12,16 @@ void stress_test() {
   for (i=0; i<4; i++){
     printf("%x\n", *(int*)((uintptr_t)h+4*i));
   }
-  printf("%d %x %p\n", h->size, ((int*)(h->magic))[1], ptr);
+  printf("%d %x %p\n", h->size, *(int*)((uintptr_t)h+4*4), ptr);
   ptr = pmm->alloc(12996);
   h = ptr-sizeof(Header);
-  printf("%d %x %p\n", h->size, ((int*)(h->magic))[1], ptr);
+  printf("%d %x %p\n", h->size, *(int*)((uintptr_t)h+4*4), ptr);
   ptr = pmm->alloc(62326);
   h = ptr-sizeof(Header);
-  printf("%d %x %p\n", h->size, ((int*)(h->magic))[1], ptr);
+  printf("%d %x %p\n", h->size, *(int*)((uintptr_t)h+4*4), ptr);
   ptr = pmm->alloc(6126);
   h = ptr-sizeof(Header);
-  printf("%d %x %p\n", h->size, ((int*)(h->magic))[1], ptr);
+  printf("%d %x %p\n", h->size, *(int*)((uintptr_t)h+4*4), ptr);
 }
 
 int main() {
