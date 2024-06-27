@@ -55,7 +55,7 @@ static void *kalloc(size_t size) {
     res = (Header*)free_block;
     res->size = (1<<(i+1))-sizeof(Header);
     memset(&(res->magic), 0xfd, sizeof(void*));
-    return (void*)((uintptr_t)res+sizeof(Header));
+    return REMOVE_HEADER(res);
   }
   return NULL;    // 内存不够
 }
@@ -64,7 +64,6 @@ static void kfree(void *ptr) {
   // 放对应大小的链表里，遍历，有相邻的合并
   Buddy *free_area = (Buddy*)heap.start;
   size_t index = 0;
-  // Header *mem_to_free = (Header *)((uintptr_t)ptr-sizeof(Header));
   Header *mem_to_free = GET_HEADER(ptr);
   void *magic = NULL;
   memset(&magic, 0xfd, sizeof(void*));
@@ -84,7 +83,7 @@ static void kfree(void *ptr) {
     pnode = free_area[index].head;
     prev = NULL;
     while(pnode){
-      if ((uintptr_t)pnode+sizeof(Header)==(uintptr_t)friend){
+      if (REMOVE_HEADER(pnode)==friend){
         if (prev==NULL){
           free_area[index].head = pnode->next;
         }else{
@@ -93,7 +92,6 @@ static void kfree(void *ptr) {
         // 释放index锁
         ptr = (void*)MIN((uintptr_t)ptr, (uintptr_t)friend);
         free_block = GET_HEADER(ptr);
-        // free_block = (FreeNode*)((uintptr_t)ptr-sizeof(Header));
         index++;
         free_block->size = (1<<index)-sizeof(Header);
         break;
