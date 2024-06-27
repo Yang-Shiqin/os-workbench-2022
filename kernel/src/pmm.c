@@ -32,7 +32,7 @@ static void *kalloc(size_t size) {
   size_t head=0, tail=0, i=0;   // index
   FreeNode *mid = NULL;
   FreeNode *free_block = NULL;
-  printf("%d", a);
+  printf("%d\n", a);
   Header *res = NULL;           // 返回的分配内存的头块
   Buddy *free_area = (Buddy*)heap.start;
   while((1<<head)<total_size) head++;
