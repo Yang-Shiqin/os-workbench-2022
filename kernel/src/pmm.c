@@ -6,6 +6,23 @@
 #define REMOVE_HEADER(p) ((void*)((uintptr_t)(p) + sizeof(Header)))
 static int MAX_ORDER; // buddy最大的index(取不到)
 
+// 初始化自旋锁
+void spinlock_init(int *lock) {
+    atomic_xchg (lock, 0);
+}
+
+// 获取锁
+void spinlock_lock(int *lock) {
+    while (!atomic_xchg (lock, 1)) {
+        // 自旋等待，直到锁被释放
+    }
+}
+
+// 释放锁
+void spinlock_unlock(int *lock) {
+    atomic_xchg (lock, 0);
+}
+
 // 空闲链表节点
 typedef struct FreeNode { 
 	size_t size; // Block size, 不加头
@@ -21,6 +38,7 @@ typedef struct Header {
 // 伙伴系统分配器数组
 typedef struct Buddy { 
 	unsigned int index; // 加头
+  int lock;
 	//  SDL_mutex* lock;
 	struct FreeNode *head; // Next free block 
 } Buddy;
@@ -36,12 +54,15 @@ static void *kalloc(size_t size) {
   while(POW2(head)<total_size) head++;
   for (tail=head; tail<MAX_ORDER; tail++){
     // tail上锁
+    spinlock_lock(&free_area[tail].lock);
     if(free_area[tail].head==NULL){
+      spinlock_unlock(&free_area[tail].lock);
       // tail下锁
       continue;
     }
     free_block = free_area[tail].head;
     free_area[tail].head = free_area[tail].head->next;
+    spinlock_unlock(&free_area[tail].lock);
     // tail释放锁
     for(i=tail-1; i>=head; i--){
       // 分裂
@@ -49,7 +70,9 @@ static void *kalloc(size_t size) {
       mid->size = POW2(i)-sizeof(FreeNode);
       mid->next = NULL;
       // tail-1上锁
+      spinlock_lock(&free_area[i].lock);
       free_area[i].head = mid;
+      spinlock_unlock(&free_area[i].lock);
       // tail-1下锁
     }
     res = (Header*)free_block;
@@ -79,6 +102,7 @@ static void kfree(void *ptr) {
   int flag=1;  // 升级没失败
   while (flag){
     // 申请index的锁
+    spinlock_lock(&free_area[index].lock);
     friend = (FreeNode*)((uintptr_t)ptr ^ POW2(index));   // 寻找伙伴
     pnode = free_area[index].head;
     prev = NULL;
@@ -90,6 +114,7 @@ static void kfree(void *ptr) {
           prev->next = pnode->next;
         }
         // 释放index锁
+        spinlock_unlock(&free_area[index].lock);
         ptr = (void*)MIN((uintptr_t)ptr, (uintptr_t)friend);
         free_block = GET_HEADER(ptr);
         index++;
@@ -102,9 +127,11 @@ static void kfree(void *ptr) {
     flag = 0;
   }
   // 申请index锁
+  spinlock_lock(&free_area[index].lock);
   free_block->next = free_area[index].head;
   free_area[index].head = free_block;
   // 释放index锁
+  spinlock_unlock(&free_area[index].lock);
 }
 
 // 初始化应该不用锁？
@@ -124,6 +151,7 @@ static void pmm_init() {
   for (i=0; i<MAX_ORDER; i++){
     free_area[i].index = i;
     free_area[i].head = NULL;
+    spinlock_init(&(free_area[i].lock));
     // todo: 锁
   }
   while(POW2(tail)<free_begin){
