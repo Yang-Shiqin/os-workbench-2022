@@ -33,7 +33,7 @@ static void *kalloc(size_t size) {
   FreeNode *free_block = NULL;
   Header *res = NULL;           // 返回的分配内存的头块
   Buddy *free_area = (Buddy*)heap.start;
-  while((1<<head)<total_size) head++;
+  while(POW2(head)<total_size) head++;
   for (tail=head; tail<MAX_ORDER; tail++){
     // tail上锁
     if(free_area[tail].head==NULL){
@@ -45,15 +45,15 @@ static void *kalloc(size_t size) {
     // tail释放锁
     for(i=tail-1; i>=head; i--){
       // 分裂
-      mid = free_block+(1<<i);
-      mid->size = (1<<i)-sizeof(FreeNode);
+      mid = free_block+POW2(i);
+      mid->size = POW2(i)-sizeof(FreeNode);
       mid->next = NULL;
       // tail-1上锁
       free_area[i].head = mid;
       // tail-1下锁
     }
     res = (Header*)free_block;
-    res->size = (1<<(i+1))-sizeof(Header);
+    res->size = POW2(i+1)-sizeof(Header);
     memset(&(res->magic), 0xfd, sizeof(void*));
     return REMOVE_HEADER(res);
   }
@@ -73,13 +73,13 @@ static void kfree(void *ptr) {
   FreeNode *prev = NULL;
   FreeNode *friend = NULL;  // 伙伴, 即要合并的空闲内存
   size_t total_size = free_block->size+sizeof(Header);
-  while((1<<index)<total_size) index++;
-  assert((1<<index)==total_size);   // 要是2的指数次
+  while(POW2(index)<total_size) index++;
+  assert(POW2(index)==total_size);   // 要是2的指数次
 
   int flag=1;  // 升级没失败
   while (flag){
     // 申请index的锁
-    friend = (FreeNode*)((uintptr_t)ptr ^ (uintptr_t)(1<<index));   // 寻找伙伴
+    friend = (FreeNode*)((uintptr_t)ptr ^ POW2(index));   // 寻找伙伴
     pnode = free_area[index].head;
     prev = NULL;
     while(pnode){
@@ -93,7 +93,7 @@ static void kfree(void *ptr) {
         ptr = (void*)MIN((uintptr_t)ptr, (uintptr_t)friend);
         free_block = GET_HEADER(ptr);
         index++;
-        free_block->size = (1<<index)-sizeof(Header);
+        free_block->size = POW2(index)-sizeof(Header);
         break;
       }
       prev = pnode;
@@ -107,14 +107,16 @@ static void kfree(void *ptr) {
   // 释放index锁
 }
 
+// 初始化应该不用锁？
 static void pmm_init() {
   assert(sizeof(Header)==sizeof(FreeNode));
   uintptr_t pmsize = ((uintptr_t)heap.end - (uintptr_t)heap.start);
   printf("Got %d MiB heap: [%p, %p)\n", pmsize >> 20, heap.start, heap.end);
-  while ((1<<MAX_ORDER) < pmsize) MAX_ORDER++;
+  while (POW2(MAX_ORDER) < pmsize) MAX_ORDER++;
   Buddy *free_area = (Buddy*)heap.start;  // 二分伙伴系统的数组
   FreeNode *header = NULL;
   uintptr_t ptr = 0;  // 指向待添加的内存块
+  uintptr_t head=0, tail=0; // 用来查找不完整的2的指数倍的内存块中的空闲内存
   // 去掉buddy数组和头块偏移后的真正空闲的start
   uintptr_t free_begin = (uintptr_t)heap.start+sizeof(Buddy)*MAX_ORDER+sizeof(Header);
   int i;
@@ -124,16 +126,42 @@ static void pmm_init() {
     free_area[i].head = NULL;
     // todo: 锁
   }
-  ptr = (uintptr_t)heap.start+(1<<19)-sizeof(FreeNode);
-  header = (FreeNode*)ptr;
-  header->size = (1<<19)-sizeof(FreeNode);
-  header->next = NULL;
-  free_area[19].head = header;
+  while(POW2(tail)<free_begin){
+    head = tail;
+    tail++;
+  }
+  // 不完整的2的指数倍的内存块放入buddy
+  tail = POW2(tail);
+  head = POW2(head);
+  for(i=0; POW2(i)<tail-head; i++) ;
+  while(head<tail && tail!=free_begin){
+    i--;
+    assert(i>=0);
+    uintptr_t mid = (tail+head)/2;
+    if (mid==free_begin){
+      header = GET_HEADER(mid);
+      header->size = tail-mid-sizeof(FreeNode);
+      header->next = NULL;
+      free_area[i].head = header;
+      assert(POW2(i)==tail-mid);
+      break;
+    }else if(mid>free_begin){
+      header = GET_HEADER(mid);
+      header->size = tail-mid-sizeof(FreeNode);
+      header->next = NULL;
+      free_area[i].head = header;
+      assert(POW2(i)==tail-mid);
+      tail = mid;
+    }else{
+      head = mid;
+    }
+  }
+  // 完整的2的指数倍的内存块放入buddy
   for (i=0; POW2(i)<free_begin; i++) ;
   for (; i<MAX_ORDER && POW2(i)<(uintptr_t)heap.end && POW2(i+1)<=(uintptr_t)heap.end; i++){ // 尾巴不是2的指数倍就不要
     ptr = POW2(i);
     header = GET_HEADER(ptr);
-    header->size = (1<<i)-sizeof(FreeNode);
+    header->size = POW2(i)-sizeof(FreeNode);
     header->next = NULL;
     free_area[i].head = header;
   }
