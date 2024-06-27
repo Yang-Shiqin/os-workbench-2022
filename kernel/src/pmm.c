@@ -1,6 +1,8 @@
 #include <common.h>
 
 #define MIN(a, b) ((a)<(b)?(a):(b))
+#define GET_HEADER(p) ((void*)((uintptr_t)(p) - sizeof(Header)))
+#define REMOVE_HEADER(p) ((void*)((uintptr_t)(p) + sizeof(Header)))
 
 #define MAX_ORDER 28           // 800最大是28
 // 空闲链表节点
@@ -10,7 +12,7 @@ typedef struct FreeNode {
 } FreeNode;
 
 
-// 头块(大小和节点一样, 方便相互转换), 大小为8字节
+// 头块(大小和节点一样, 方便相互转换)
 typedef struct Header { 
 	size_t size; // Block size, 不加头
 	void* magic; // canary, 0xfdfdfdfd为正常
@@ -26,10 +28,10 @@ typedef struct Buddy {
 static void *kalloc(size_t size) {
   printf("call kalloc\n");
   size_t total_size = size+sizeof(Header);
-  size_t head=0, tail=0, i=0;
+  size_t head=0, tail=0, i=0;   // index
   FreeNode *mid = NULL;
   FreeNode *free_block = NULL;
-  Header *res = NULL;
+  Header *res = NULL;           // 返回的分配内存的头块
   Buddy *free_area = (Buddy*)heap.start;
   while((1<<head)<total_size) head++;
   for (tail=head; tail<MAX_ORDER; tail++){
@@ -62,7 +64,8 @@ static void kfree(void *ptr) {
   // 放对应大小的链表里，遍历，有相邻的合并
   Buddy *free_area = (Buddy*)heap.start;
   size_t index = 0;
-  Header *mem_to_free = (Header *)((uintptr_t)ptr-sizeof(Header));
+  // Header *mem_to_free = (Header *)((uintptr_t)ptr-sizeof(Header));
+  Header *mem_to_free = GET_HEADER(ptr);
   void *magic = NULL;
   memset(&magic, 0xfd, sizeof(void*));
   assert(memcmp(&magic, &(mem_to_free->magic), sizeof(void*))==0); // magic被人改了就完了
@@ -89,7 +92,8 @@ static void kfree(void *ptr) {
         }
         // 释放index锁
         ptr = (void*)MIN((uintptr_t)ptr, (uintptr_t)friend);
-        free_block = (FreeNode*)((uintptr_t)ptr-sizeof(Header));
+        free_block = GET_HEADER(ptr);
+        // free_block = (FreeNode*)((uintptr_t)ptr-sizeof(Header));
         index++;
         free_block->size = (1<<index)-sizeof(Header);
         break;
@@ -106,6 +110,7 @@ static void kfree(void *ptr) {
 }
 
 static void pmm_init() {
+  assert(sizeof(Header)==sizeof(FreeNode));
   uintptr_t pmsize = ((uintptr_t)heap.end - (uintptr_t)heap.start);
   printf("Got %d MiB heap: [%p, %p)\n", pmsize >> 20, heap.start, heap.end);
   Buddy *free_area = (Buddy*)heap.start;
