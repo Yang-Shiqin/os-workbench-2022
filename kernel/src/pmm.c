@@ -11,6 +11,7 @@ typedef struct FreeNode {
 	struct FreeNode *next; // Next free block 
 } FreeNode;
 
+int a;
 
 // 头块(大小和节点一样, 方便相互转换)
 typedef struct Header { 
@@ -31,6 +32,7 @@ static void *kalloc(size_t size) {
   size_t head=0, tail=0, i=0;   // index
   FreeNode *mid = NULL;
   FreeNode *free_block = NULL;
+  printf("%d", a);
   Header *res = NULL;           // 返回的分配内存的头块
   Buddy *free_area = (Buddy*)heap.start;
   while((1<<head)<total_size) head++;
