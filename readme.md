@@ -4,7 +4,7 @@
 - [x] M1:pstree
 - [x] L0:amgame
 - [ ] M2:libco
-- [ ] L1:pmm
+- [ ] L1:pmm(buddy, 加了自旋锁, 感觉性能不好还可能错(不知道会不会中断), 未测试)
 - [ ] M3
 - [ ] L2
 
