@@ -114,7 +114,7 @@ static void pmm_init() {
   while ((1<<MAX_ORDER) < pmsize) MAX_ORDER++;
   Buddy *free_area = (Buddy*)heap.start;  // 二分伙伴系统的数组
   FreeNode *header = NULL;
-  uintptr_t offset_ptr = 0;  // 指向待添加的内存块
+  uintptr_t ptr = 0;  // 指向待添加的内存块
   // 去掉buddy数组和头块偏移后的真正空闲的start
   uintptr_t free_begin = (uintptr_t)heap.start+sizeof(Buddy)*MAX_ORDER+sizeof(Header);
   int i;
@@ -124,15 +124,15 @@ static void pmm_init() {
     free_area[i].head = NULL;
     // todo: 锁
   }
-  offset_ptr = (uintptr_t)heap.start+(1<<19)-sizeof(FreeNode);
-  header = (FreeNode*)offset_ptr;
+  ptr = (uintptr_t)heap.start+(1<<19)-sizeof(FreeNode);
+  header = (FreeNode*)ptr;
   header->size = (1<<19)-sizeof(FreeNode);
   header->next = NULL;
   free_area[19].head = header;
   for (i=0; POW2(i)<free_begin; i++) ;
   for (; i<MAX_ORDER && POW2(i)<(uintptr_t)heap.end && POW2(i+1)<=(uintptr_t)heap.end; i++){ // 尾巴不是2的指数倍就不要
-    offset_ptr = ((uintptr_t)(1<<i)-sizeof(FreeNode));
-    header = (FreeNode*)offset_ptr;
+    ptr = POW2(i);
+    header = GET_HEADER(ptr);
     header->size = (1<<i)-sizeof(FreeNode);
     header->next = NULL;
     free_area[i].head = header;
