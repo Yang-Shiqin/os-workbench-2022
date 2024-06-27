@@ -1,17 +1,16 @@
 #include <common.h>
 
 #define MIN(a, b) ((a)<(b)?(a):(b))
+#define POW2(x) ((uintptr_t)(1 << (x)))
 #define GET_HEADER(p) ((void*)((uintptr_t)(p) - sizeof(Header)))
 #define REMOVE_HEADER(p) ((void*)((uintptr_t)(p) + sizeof(Header)))
+static int MAX_ORDER; // buddy最大的index(取不到)
 
-#define MAX_ORDER 28           // 800最大是28
 // 空闲链表节点
 typedef struct FreeNode { 
 	size_t size; // Block size, 不加头
 	struct FreeNode *next; // Next free block 
 } FreeNode;
-
-int a;
 
 // 头块(大小和节点一样, 方便相互转换)
 typedef struct Header { 
@@ -32,7 +31,6 @@ static void *kalloc(size_t size) {
   size_t head=0, tail=0, i=0;   // index
   FreeNode *mid = NULL;
   FreeNode *free_block = NULL;
-  printf("%d\n", a);
   Header *res = NULL;           // 返回的分配内存的头块
   Buddy *free_area = (Buddy*)heap.start;
   while((1<<head)<total_size) head++;
@@ -113,21 +111,27 @@ static void pmm_init() {
   assert(sizeof(Header)==sizeof(FreeNode));
   uintptr_t pmsize = ((uintptr_t)heap.end - (uintptr_t)heap.start);
   printf("Got %d MiB heap: [%p, %p)\n", pmsize >> 20, heap.start, heap.end);
-  Buddy *free_area = (Buddy*)heap.start;
+  while ((1<<MAX_ORDER) < pmsize) MAX_ORDER++;
+  Buddy *free_area = (Buddy*)heap.start;  // 二分伙伴系统的数组
   FreeNode *header = NULL;
-  char* offset_ptr = NULL;
+  uintptr_t offset_ptr = 0;  // 指向待添加的内存块
+  // 去掉buddy数组和头块偏移后的真正空闲的start
+  uintptr_t free_begin = (uintptr_t)heap.start+sizeof(Buddy)*MAX_ORDER+sizeof(Header);
   int i;
+  // 初始化buddy数组
   for (i=0; i<MAX_ORDER; i++){
     free_area[i].index = i;
     free_area[i].head = NULL;
+    // todo: 锁
   }
-  offset_ptr = (char*)heap.start+(1<<19)-sizeof(FreeNode);
+  offset_ptr = (uintptr_t)heap.start+(1<<19)-sizeof(FreeNode);
   header = (FreeNode*)offset_ptr;
   header->size = (1<<19)-sizeof(FreeNode);
   header->next = NULL;
   free_area[19].head = header;
-  for (i=22; i<27; i++){ // 应该是算出来的
-    offset_ptr = (char*)((uintptr_t)(1<<i)-sizeof(FreeNode));
+  for (i=0; POW2(i)<free_begin; i++) ;
+  for (; i<MAX_ORDER && POW2(i)<(uintptr_t)heap.end && POW2(i+1)<=(uintptr_t)heap.end; i++){ // 尾巴不是2的指数倍就不要
+    offset_ptr = ((uintptr_t)(1<<i)-sizeof(FreeNode));
     header = (FreeNode*)offset_ptr;
     header->size = (1<<i)-sizeof(FreeNode);
     header->next = NULL;
