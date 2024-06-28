@@ -28,7 +28,7 @@ int strace(int fd){
 // [ ] todo
 // 父进程读取管道输入, 解析并统计syscall时长, 展示出来
 int sperf(int fd){
-  char buf[1024];
+  char buf[1024]={0};
   while (read(fd, buf, sizeof(buf)-1) > 0){
     // 解析并显示时间
     printf("%s\n", buf);
