@@ -26,7 +26,9 @@ int strace(int fd, int argc, char *argv[]){
   }
   char *exec_envp[] = { "PATH=/bin:/usr/bin", NULL, };
   dup2(fd, STDERR_FILENO);
+  fflush(STDOUT_FILENO);
   close(STDOUT_FILENO);
+  fflush(STDERR_FILENO);
   execve("/bin/strace", exec_argv, exec_envp);
   perror("execve");
   exit(EXIT_FAILURE);
