@@ -13,13 +13,14 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-// [ ] todo
 // 子进程调用strace CMD [ARG], 输出管道给父进程
 int strace(int fd, int argc, char *argv[]){
-  char **exec_argv = (char**)malloc(sizeof(char*)*(argc+2));
+  char **exec_argv = (char**)malloc(sizeof(char*)*(argc+3));
   int i;
+  // [ ] todo
   // 构建参数: CMD以/开头, 则直接执行; 否则在PATH中找
   exec_argv[0] = "strace";
+  exec_argv[1] = "-T";
   exec_argv[argc+1] = NULL;
   for (i=0; i<argc; i++){
     exec_argv[i+1] = argv[i];
@@ -32,15 +33,14 @@ int strace(int fd, int argc, char *argv[]){
   exit(EXIT_FAILURE);
 }
 
-// [ ] todo
 // 父进程读取管道输入, 解析并统计syscall时长, 展示出来
 int sperf(int fd){
   char buf[256]={0};
   ssize_t num_read;
   while ((num_read=read(fd, buf, sizeof(buf)-1)) > 0){
+// [ ] todo
     // 解析并显示时间
     buf[num_read] = 0;
-    printf("%x %x ", buf[num_read-1], buf[0]);
     printf("%s", buf);
     // printf("[%d] Got: '%s'\n", getpid(), buf);
   }
