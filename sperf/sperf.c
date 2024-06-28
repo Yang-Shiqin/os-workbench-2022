@@ -31,7 +31,8 @@ int sperf(int fd){
   char buf[1024];
   while (read(fd, buf, sizeof(buf)-1) > 0){
     // 解析并显示时间
-    printf("[%d] Got: '%s'\n", getpid(), buf);
+    printf("%s\n", buf);
+    // printf("[%d] Got: '%s'\n", getpid(), buf);
   }
   close(fd);
   return 0;
