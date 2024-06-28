@@ -19,6 +19,7 @@ int strace(int fd){
   char *exec_argv[] = { "strace", "ls", NULL, };
   char *exec_envp[] = { "PATH=/bin:/usr/bin", NULL, };
   dup2(fd, STDERR_FILENO);
+  close(STDOUT_FILENO);
   execve("/bin/strace",     exec_argv, exec_envp);
   return 0;
 }
@@ -43,13 +44,13 @@ int main(int argc, char *argv[]) {
     fprintf(stderr, "Usage: %s <CMD> [ARG]\n", argv[0]);
     exit(EXIT_FAILURE);
   }
-  // 3. 创建管道
+  // 2. 创建管道
   int pipefd[2];
   if (-1==pipe(pipefd)){
     perror("pipe");
     exit(EXIT_FAILURE);
   }
-  // 4. fork进程
+  // 3. fork进程
   pid_t pid = fork();
   if (-1==pid){
     perror("fork");
