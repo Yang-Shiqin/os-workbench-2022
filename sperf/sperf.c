@@ -16,12 +16,16 @@
 // // [ ] todo
 // // 子进程调用strace CMD [ARG], 输出管道给父进程
 // int strace(int fd){
+//   char *exec_argv[] = { "strace", "ls", NULL, };
+//   char *exec_envp[] = { "PATH=/bin", NULL, };
+//   execve("/bin/strace",     exec_argv, exec_envp);
 //   return 0;
 // }
 
 // // [ ] todo
 // // 父进程读取管道输入, 解析并统计syscall时长, 展示出来
 // int sperf(int fd){
+//   char buf[257];
 //   return 0;
 // }
 
@@ -59,8 +63,8 @@ int main(int argc, char *argv[]) {
 
   char *exec_argv[] = { "strace", "ls", NULL, };
   char *exec_envp[] = { "PATH=/bin", NULL, };
-  // execve("strace",          exec_argv, exec_envp);
-  execve("/bin/strace",     exec_argv, exec_envp);
+  execve("strace",          exec_argv, exec_envp);
+  // execve("/bin/strace",     exec_argv, exec_envp);
   // execve("/usr/bin/strace", exec_argv, exec_envp);
   perror(argv[0]);
   exit(EXIT_FAILURE);
