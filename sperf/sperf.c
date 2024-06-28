@@ -21,9 +21,9 @@ int strace(int fd, int argc, char *argv[]){
   // 构建参数: CMD以/开头, 则直接执行; 否则在PATH中找
   exec_argv[0] = "strace";
   exec_argv[1] = "-T";
-  exec_argv[argc+1] = NULL;
+  exec_argv[argc+2] = NULL;
   for (i=0; i<argc; i++){
-    exec_argv[i+1] = argv[i];
+    exec_argv[i+2] = argv[i];
   }
   char *exec_envp[] = { "PATH=/bin:/usr/bin", NULL, };
   dup2(fd, STDERR_FILENO);
