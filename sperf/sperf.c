@@ -16,9 +16,10 @@
 // [ ] todo
 // 子进程调用strace CMD [ARG], 输出管道给父进程
 int strace(int fd, int argc, char *argv[]){
-  char *exec_argv[argc+2] = 0;
+  char *exec_argv[] = (char*[])malloc(sizeof(char*)*(argc+2));
   int i;
   exec_argv[0] = "strace";
+  exec_argv[argc+1] = NULL;
   for (i=0; i<argc; i++){
     exec_argv[i+1] = argv[i];
   }
