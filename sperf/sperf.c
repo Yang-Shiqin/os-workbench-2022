@@ -21,7 +21,8 @@ int strace(int fd){
   dup2(fd, STDERR_FILENO);
   close(STDOUT_FILENO);
   execve("/bin/strace",     exec_argv, exec_envp);
-  return 0;
+  perror("execve");
+  exit(EXIT_FAILURE);
 }
 
 // [ ] todo
@@ -30,7 +31,7 @@ int sperf(int fd){
   char buf[1024];
   while (read(fd, buf, sizeof(buf)-1) > 0){
     // 解析并显示时间
-    // printf("[%d] Got: '%s'\n", getpid(), buf);
+    printf("[%d] Got: '%s'\n", getpid(), buf);
   }
   close(fd);
   return 0;
