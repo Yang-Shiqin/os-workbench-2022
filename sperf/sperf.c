@@ -35,12 +35,12 @@ int strace(int fd, int argc, char *argv[]){
 // [ ] todo
 // 父进程读取管道输入, 解析并统计syscall时长, 展示出来
 int sperf(int fd){
-  char buf[1024]={0};
+  char buf[256]={0};
   ssize_t num_read;
   while ((num_read=read(fd, buf, sizeof(buf)-1)) > 0){
     // 解析并显示时间
     buf[num_read] = 0;
-    printf("%d\n", (int)num_read);
+    printf("%x %x", buf[num_read-2], buf[num_read-1]);
     printf("%s", buf);
     // printf("[%d] Got: '%s'\n", getpid(), buf);
   }
