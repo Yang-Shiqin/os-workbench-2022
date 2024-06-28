@@ -18,16 +18,16 @@
 int strace(int fd, int argc, char *argv[]){
   char **exec_argv = (char**)malloc(sizeof(char*)*(argc+2));
   int i;
+  // 构建参数: CMD以/开头, 则直接执行; 否则在PATH中找
   exec_argv[0] = "strace";
   exec_argv[argc+1] = NULL;
   for (i=0; i<argc; i++){
     exec_argv[i+1] = argv[i];
   }
-  // char *exec_argv[] = { "strace", "ls", NULL, };
   char *exec_envp[] = { "PATH=/bin:/usr/bin", NULL, };
   dup2(fd, STDERR_FILENO);
   close(STDOUT_FILENO);
-  execve("/bin/strace",     exec_argv, exec_envp);
+  execve("/bin/strace", exec_argv, exec_envp);
   perror("execve");
   exit(EXIT_FAILURE);
 }
@@ -39,6 +39,7 @@ int sperf(int fd){
   while (read(fd, buf, sizeof(buf)-1) > 0){
     // 解析并显示时间
     printf("%saaa\n", buf);
+    fflush(stdout);
     // printf("[%d] Got: '%s'\n", getpid(), buf);
   }
   close(fd);
