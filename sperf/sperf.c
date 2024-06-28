@@ -15,12 +15,12 @@
 
 // [ ] todo
 // 子进程调用strace CMD [ARG], 输出管道给父进程
-int strace(int fd){
-  char *exec_argv[] = { "strace", "ls", NULL, };
+int strace(int fd, int argc, char *argv[]){
+  // char *exec_argv[] = { "strace", "ls", NULL, };
   char *exec_envp[] = { "PATH=/bin:/usr/bin", NULL, };
   dup2(fd, STDERR_FILENO);
   close(STDOUT_FILENO);
-  execve("/bin/strace",     exec_argv, exec_envp);
+  execve("/bin/strace",     argv, exec_envp);
   perror("execve");
   exit(EXIT_FAILURE);
 }
@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
   }else if (0==pid){
     // child: 关闭读口
     close(pipefd[0]);
-    strace(pipefd[1]);
+    strace(pipefd[1], argc-1, argv+1);
   }else{
     // parent: 关闭写口
     close(pipefd[1]);
