@@ -40,7 +40,7 @@ int sperf(int fd){
   while ((num_read=read(fd, buf, sizeof(buf)-1)) > 0){
     // 解析并显示时间
     buf[num_read] = 0;
-    printf("%x %x", buf[num_read-2], buf[num_read-1]);
+    printf("%x %x ", buf[num_read-1], buf[0]);
     printf("%s", buf);
     // printf("[%d] Got: '%s'\n", getpid(), buf);
   }
