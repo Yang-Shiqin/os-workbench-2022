@@ -17,15 +17,15 @@
 int strace(int fd, int argc, char *argv[]){
   char **exec_argv = (char**)malloc(sizeof(char*)*(argc+3));
   int i;
-  // [ ] todo
-  // 构建参数: CMD以/开头, 则直接执行; 否则在PATH中找
+  // 构建参数
   exec_argv[0] = "strace";
   exec_argv[1] = "-T";
   exec_argv[argc+2] = NULL;
   for (i=0; i<argc; i++){
     exec_argv[i+2] = argv[i];
   }
-  char *exec_envp[] = { "PATH=", NULL, };
+  // execve会自动在环境变量中查找
+  char *exec_envp[] = { "PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin", NULL, };
   dup2(fd, STDERR_FILENO);
   close(STDOUT_FILENO);
   execve("/bin/strace", exec_argv, exec_envp);
