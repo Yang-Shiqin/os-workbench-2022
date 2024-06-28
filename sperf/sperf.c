@@ -18,7 +18,7 @@
 int strace(int fd){
   char *exec_argv[] = { "strace", "ls", NULL, };
   char *exec_envp[] = { "PATH=/bin:/usr/bin", NULL, };
-  dup2(fd, STDOUT_FILENO);
+  dup2(fd, STDERR_FILENO);
   execve("/bin/strace",     exec_argv, exec_envp);
   return 0;
 }
