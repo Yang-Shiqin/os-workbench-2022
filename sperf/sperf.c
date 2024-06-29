@@ -16,7 +16,13 @@ int compare(const void *a, const void *b) {
     SyscallInfo *s1 = (SyscallInfo *)a;
     SyscallInfo *s2 = (SyscallInfo *)b;
     // 按照 score 字段的降序排列
-    return s2->time - s1->time;
+    if (fabs(s2->time - s1->time) < 1e-6){
+      return 0;
+    }else if (s2->time > s1->time){
+      return 1;
+    }else{
+      return -1;
+    }
 }
 
 // 子进程调用strace CMD [ARG], 输出管道给父进程
