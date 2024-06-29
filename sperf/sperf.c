@@ -262,7 +262,7 @@ int sperf(int fd){
         assert(*(pbuf)!='\n');
       } else if (ret == REG_NOMATCH) {
         // 到最后了
-        printf("%s\n", *(pbuf2-1));
+        printf("%s\n", (pbuf2-1));
         printf("%c\n", *(pbuf2-1));
         assert(*(pbuf2-1)=='?');
         break;
