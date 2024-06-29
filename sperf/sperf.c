@@ -211,6 +211,7 @@ int sperf(int fd){
     perror("regex");
     exit(EXIT_FAILURE);
   }
+  printf("sdfsdf");
   while ((num_read=read(fd, buf, sizeof(buf)-1)) > 0){
     buf[num_read]=0;
     strcat(remove_buf[0], buf);
