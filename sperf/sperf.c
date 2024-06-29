@@ -258,8 +258,8 @@ int sperf(int fd){
         pbuf = pbuf2+1;
       } else if (ret == REG_NOMATCH) {
         printf("No match\n");
-        printf("pbuf:%s\n", pbuf);
-
+        printf("%spbuf:%s\n", pbuf2, pbuf);
+        
       } else {
         char errbuf[100];
         regerror(ret, &regex, errbuf, sizeof(errbuf));
