@@ -265,7 +265,7 @@ int sperf(int fd){
         // 到最后了
         printf("No match\n");
         printf("pbuf:%s\n\npubf2:%s\n\n", pbuf, pbuf2);
-        // break;
+        break;
       } else {
         perror("regex");
         exit(EXIT_FAILURE);
