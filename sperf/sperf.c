@@ -84,11 +84,10 @@ int sperf(int fd){
             int list_i;
             double tmp_time = atof(time_buf);
             time += tmp_time;
-            printf("name_buf:%s\n", name_buf);
             for (list_i=0; list_i<tail; list_i++){
-              printf("list_i:%s %d\n", syscall_info_list[list_i].name, strcmp(syscall_info_list[list_i].name, name_buf));
               if (0==strcmp(syscall_info_list[list_i].name, name_buf)){
                 syscall_info_list[list_i].time += tmp_time;
+                break;
               }
             }
             if (list_i==tail){
@@ -104,9 +103,9 @@ int sperf(int fd){
               time = 0;
               qsort(syscall_info_list, tail, sizeof(SyscallInfo), compare);
               printf("Top 5 syscalls by time:\n");
-              // for (i = 0; i < tail/*(tail < 5 ? tail : 5)*/; i++) {
-              //     printf("%s: %.6f seconds\n", syscall_info_list[i].name, syscall_info_list[i].time);
-              // }
+              for (i = 0; i < tail/*(tail < 5 ? tail : 5)*/; i++) {
+                  printf("%s: %.6f seconds\n", syscall_info_list[i].name, syscall_info_list[i].time);
+              }
             }
           }
       }else if (reading){ // 读完name还没开始读time
