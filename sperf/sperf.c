@@ -260,7 +260,7 @@ int sperf(int fd){
         }
         // pbuf = pbuf2+1;  // 坑: syscall中间有回车, 因此应该从匹配结尾继续
         pbuf += matches[0].rm_eo+1;
-        printf("%c\n\n", pbuf);
+        printf("%s\n\n", pbuf);
       } else if (ret == REG_NOMATCH) {
         // 到最后了
         printf("No match\n");
