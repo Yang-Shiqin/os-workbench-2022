@@ -190,7 +190,7 @@ void remove_quoted_contents(const char *input, char *output) {
 }
 
 int sperf(int fd){
-  const char *pattern = "([a-zA-Z_0-9]+)\\(.*\\)\\s*=.*<([0-9.]+)>";
+  const char *pattern = "([a-zA-Z_0-9]+)\\([\\s\\S]*\\)\\s*=.*<([0-9.]+)>";
   regex_t regex;
   regmatch_t matches[3];
   char buf[256] = {0};
