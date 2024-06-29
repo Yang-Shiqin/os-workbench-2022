@@ -55,7 +55,7 @@ int sperf(int fd){
     pbuf = buf;
     // 解析并显示时间
     buf[num_read] = 0;
-    printf("%s", buf);
+    // printf("%s", buf);
     while(pbuf<buf+num_read){
       assert(!(reading_name&reading_time&1)); // 不能同时正在读取
       printf("%d %d %d\n", reading, reading_name, reading_time);
