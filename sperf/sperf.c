@@ -211,12 +211,9 @@ int sperf(int fd){
   }
   while ((num_read=read(fd, buf, sizeof(buf)-1)) > 0){
     buf[num_read]=0;
-    printf("buf:%s\n\n", buf);
     strcat(remove_buf[0], buf);
-    printf("remove_buf[0]:%s\n\n", remove_buf[0]);
     remove_quoted_contents(remove_buf[0], remove_buf[1]); // 去除引号内的内容
     pbuf = remove_buf[1];
-    printf("pbuffff:%s\n\n", pbuf);
     while(*pbuf!=0 && (pbuf2 = strstr(pbuf, "\n"))!=NULL){
       ret = regexec(&regex, pbuf, 3, matches, 0);
       if (!ret) {
@@ -266,9 +263,8 @@ int sperf(int fd){
         printf("No match\n");
         break;
       } else {
-        char errbuf[100];
-        regerror(ret, &regex, errbuf, sizeof(errbuf));
-        fprintf(stderr, "Regex match failed: %s\n", errbuf);
+        perror("regex");
+        exit(EXIT_FAILURE);
       }
     }
     if (*pbuf) strncpy(remove_buf[0], pbuf, sizeof(remove_buf[0]));
