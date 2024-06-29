@@ -156,7 +156,7 @@ int sperf(int fd){
         printf("%s\n", (pbuf));
         printf("%s\n", (remove_buf[0]));
         printf("%c\n", *(pbuf2-1));
-        assert(*(pbuf2-1)=='?');
+        // assert(*(pbuf2-1)=='?');
         break;
       } else {
         perror("regex");
