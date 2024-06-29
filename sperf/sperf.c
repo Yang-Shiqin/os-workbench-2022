@@ -238,7 +238,7 @@ int sperf(int fd){
           }
         }
         if (list_i==tail){
-          strcpy(syscall_info_list[tail].name, name_buf);
+          strncpy(syscall_info_list[tail].name, name_buf, sizeof(name_buf));
           syscall_info_list[tail].time = tmp_time;
           tail++;
           assert(tail<512);
