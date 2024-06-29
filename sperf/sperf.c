@@ -113,10 +113,10 @@ int sperf(int fd){
               printf("Time: %.3fs\n", total_time);
               for (i = 0; i < (tail < 5 ? tail : 5); i++) {
                   // printf("%s: %.6f seconds\n", syscall_info_list[i].name, syscall_info_list[i].time);
-                  printf("%s (%d%%)\n", syscall_info_list[i].name, (int)syscall_info_list[i].time*100/total_time);
+                  printf("%s (%d%%)\n", syscall_info_list[i].name, (int)syscall_info_list[i].time*100./total_time);
               }
               for (i=0; i<80; i++){
-                putch(0);
+                putc(0, stdout);
               }
               printf("==================\n");
             }
