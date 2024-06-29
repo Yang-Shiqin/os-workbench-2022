@@ -161,7 +161,6 @@ void remove_quoted_contents(const char *input, char *output) {
   const char *pattern = "\"(\\\\\"|[^\"])*\"";  // 匹配两个双引号之间的内容
   regex_t regex;
   regmatch_t match;
-  // int start = 0;
   int end = 0;
   int offset = 0;
   int ret;
@@ -171,21 +170,16 @@ void remove_quoted_contents(const char *input, char *output) {
     perror("regex");
     exit(EXIT_FAILURE);
   }
-
   // 逐个匹配并删除
   while ((ret = regexec(&regex, input + offset, 1, &match, 0)) == 0) {
-    // start = match.rm_so + offset;
     end = match.rm_eo + offset;
-
     // 将匹配前的内容复制到输出
     strncpy(output + strlen(output), input + offset, match.rm_so);
     // 复制双引号到输出
     offset = end;
   }
-
   // 复制剩余的内容
   strcat(output, input + offset);
-
   // 释放正则表达式对象
   regfree(&regex);
 }
@@ -212,20 +206,15 @@ int sperf(int fd){
   }
   while ((num_read=read(fd, buf, sizeof(buf)-1)) > 0){
     buf[num_read]=0;
-    printf("buf:%s\n\n", buf);
+    // printf("buf:%s\n\n", buf);
     strcat(remove_buf[0], buf);
-    printf("remove_buf[0]:%s\n\n", remove_buf[0]);
-  printf("1sdfsdf\n");
+    // printf("remove_buf[0]:%s\n\n", remove_buf[0]);
     remove_quoted_contents(remove_buf[0], remove_buf[1]); // 去除引号内的内容
-  printf("2sdfsdf\n");
     pbuf = remove_buf[1];
-    printf("pbuf:%s\n\n", pbuf);
+    // printf("pbuf:%s\n\n", pbuf);
     while(*pbuf!=0 && (pbuf2 = strstr(pbuf, "\n"))!=NULL){
-  printf("3sdfsdf\n");
       ret = regexec(&regex, pbuf, 3, matches, 0);
-  printf("4sdfsdf\n");
       if (!ret) {
-  printf("5sdfsdf\n");
         // 提取系统调用名称
         int len = matches[1].rm_eo - matches[1].rm_so;
         assert(len<16);
@@ -269,6 +258,8 @@ int sperf(int fd){
         pbuf = pbuf2+1;
       } else if (ret == REG_NOMATCH) {
         printf("No match\n");
+        printf("pbuf:%s\n", pbuf);
+
       } else {
         char errbuf[100];
         regerror(ret, &regex, errbuf, sizeof(errbuf));
