@@ -214,7 +214,7 @@ int sperf(int fd){
     strcat(remove_buf[0], buf);
     remove_quoted_contents(remove_buf[0], remove_buf[1]); // 去除引号内的内容
     pbuf = remove_buf[1];
-    printf("buf:%s\n\n0:%s\n\n1:%s\n\n", buf, remove_buf[0], pbuf);
+    // printf("buf:%s\n\n0:%s\n\n1:%s\n\n", buf, remove_buf[0], pbuf);
     while(*pbuf!=0 && (pbuf2 = strstr(pbuf, "\n"))!=NULL){
       ret = regexec(&regex, pbuf, 3, matches, 0);
       if (!ret) {
@@ -260,7 +260,6 @@ int sperf(int fd){
         }
         // pbuf = pbuf2+1;  // 坑: syscall中间有回车, 因此应该从匹配结尾继续
         pbuf += matches[0].rm_eo+1;
-        printf("%d\n\n", (*pbuf)==0);
       } else if (ret == REG_NOMATCH) {
         // 到最后了
         printf("No match\n");
