@@ -6,7 +6,7 @@
 
 // [ ] todo: name可能超, 目前用的是栈上数组, 也可能超
 typedef struct SyscallInfo{
-    char name[16];  // syscall name
+    char name[100];  // syscall name
     double time;    // add up duration(s)
     // struct SyscallInfo * next;
 } SyscallInfo;
