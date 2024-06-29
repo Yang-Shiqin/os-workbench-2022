@@ -198,7 +198,7 @@ int sperf(int fd){
   char buf[256] = {0};
   char name_buf[16] = {0};
   char time_buf[16] = {0};
-  char remove_buf[2][256] = {0};
+  char remove_buf[2][512] = {0};
   char *pbuf = NULL;
   char *pbuf2 = NULL;
   double time=0, total_time=0;
@@ -266,7 +266,7 @@ int sperf(int fd){
         fprintf(stderr, "Regex match failed: %s\n", errbuf);
       }
     }
-    if (*(pbuf2+1)) strcpy(remove_buf[0], pbuf2+1);
+    if (*(pbuf2+1)) strncpy(remove_buf[0], pbuf2+1, len(remove_buf[0]));
     // 释放正则表达式对象
     regfree(&regex);
   }
