@@ -151,7 +151,7 @@ int sperf(int fd){
         assert(*(pbuf)!='\n');
       } else if (ret == REG_NOMATCH) {
         // 到最后了
-        if (*(pbuf2-1)=='?' || *(pbuf2)=='+') break;
+        if (*(pbuf2-1)=='?' || *(pbuf2+1)=='+') break;
         // printf("pbuf2-1:%s\n", (pbuf2-1));
         // printf("pbuf2:%s\n", (pbuf2));
         // printf("pbuf:%s\n", (pbuf));
