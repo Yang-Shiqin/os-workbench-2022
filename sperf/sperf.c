@@ -104,9 +104,9 @@ int sperf(int fd){
               time = 0;
               qsort(syscall_info_list, tail, sizeof(SyscallInfo), compare);
               printf("Top 5 syscalls by time:\n");
-              for (i = 0; i < tail/*(tail < 5 ? tail : 5)*/; i++) {
-                  printf("%s: %.6f seconds\n", syscall_info_list[i].name, syscall_info_list[i].time);
-              }
+              // for (i = 0; i < tail/*(tail < 5 ? tail : 5)*/; i++) {
+              //     printf("%s: %.6f seconds\n", syscall_info_list[i].name, syscall_info_list[i].time);
+              // }
             }
           }
       }else if (reading){ // 读完name还没开始读time
