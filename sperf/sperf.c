@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <assert.h>
 
 // [ ] todo: name可能超, 目前用的是栈上数组, 也可能超
 typedef struct SyscallInfo{
