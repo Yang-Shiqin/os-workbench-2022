@@ -102,7 +102,6 @@ int sperf(int fd){
     strcat(remove_buf[0], buf);
     remove_quoted_contents(remove_buf[0], remove_buf[1]); // 去除引号内的内容
     pbuf = remove_buf[1];
-    // fprintf(stderr, "buf:%s\n\n0:%s\n\n1:%s\n\n", buf, remove_buf[0], pbuf);
     while(*pbuf!=0 && (pbuf2 = strstr(pbuf, "\n"))!=NULL){
       ret = regexec(&regex, pbuf, 3, matches, 0);
       if (!ret) {
@@ -166,7 +165,6 @@ int sperf(int fd){
   qsort(syscall_info_list, tail, sizeof(SyscallInfo), compare); // 排序
   printf("Time: %.1fs\n", total_time);
   for (i = 0; i < (tail < 5 ? tail : 5); i++) {
-      // printf("%s: %.6f seconds\n", syscall_info_list[i].name, syscall_info_list[i].time);
       printf("%s (%d%%)\n", syscall_info_list[i].name, (int)(syscall_info_list[i].time*100/total_time));
   }
   for (i=0; i<80; i++){
@@ -176,7 +174,6 @@ int sperf(int fd){
   close(fd);
   return 0;
 }
-
 
 // sperf CMD [ARG]  ->  strace CMD [ARG] | sperf
 int main(int argc, char *argv[]) {
