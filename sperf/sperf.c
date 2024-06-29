@@ -165,6 +165,7 @@ void remove_quoted_contents(const char *input, char *output) {
   int offset = 0;
   int ret;
   *output = 0;
+  assert(strlen(output)==0);
   // 编译正则表达式
   if (regcomp(&regex, pattern, REG_EXTENDED) != 0) {
     perror("regex");
@@ -174,6 +175,7 @@ void remove_quoted_contents(const char *input, char *output) {
   while ((ret = regexec(&regex, input + offset, 1, &match, 0)) == 0) {
     end = match.rm_eo + offset;
     // 将匹配前的内容复制到输出
+    assert(strlen(output)<512);
     strncpy(output + strlen(output), input + offset, match.rm_so);
     printf("%d %d %d\n", (int)strlen(output), offset, match.rm_so);
     // 复制双引号到输出
