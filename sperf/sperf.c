@@ -151,10 +151,10 @@ int sperf(int fd){
         assert(*(pbuf)!='\n');
       } else if (ret == REG_NOMATCH) {
         // 到最后了
-        printf("%s\n", (pbuf2-1));
-        printf("%s\n", (pbuf2));
-        printf("%s\n", (pbuf));
-        printf("%s\n", (remove_buf[0]));
+        printf("pbuf2-1:%s\n", (pbuf2-1));
+        printf("pbuf2:%s\n", (pbuf2));
+        printf("pbuf:%s\n", (pbuf));
+        printf("remove_buf:%s\n", (remove_buf[0]));
         printf("%c\n", *(pbuf2-1));
         // assert(*(pbuf2-1)=='?');
         break;
