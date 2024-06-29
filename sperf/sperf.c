@@ -86,7 +86,7 @@ int sperf(int fd){
             time += tmp_time;
             printf("name_buf:%s\n", name_buf);
             for (list_i=0; list_i<tail; list_i++){
-              printf("list_i:%s\n", syscall_info_list[list_i].name);
+              printf("list_i:%s %d\n", syscall_info_list[list_i].name, strcmp(syscall_info_list[list_i].name, name_buf));
               if (0==strcmp(syscall_info_list[list_i].name, name_buf)){
                 syscall_info_list[list_i].time += tmp_time;
               }
