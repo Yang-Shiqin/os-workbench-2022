@@ -1,11 +1,11 @@
 /******** todo
  * execve怎么用, 环境变量怎么处理(读手册)
  * strace二进制文件位置
- * CMD带/直接执行, 否则在PATH中查找, 的实现
- * 时间统计
  ************* done
  * pipe怎么用
  * fork用法
+ * 时间统计
+ * CMD带/直接执行, 否则在PATH中查找, 的实现
  */
 
 
@@ -25,7 +25,7 @@ int strace(int fd, int argc, char *argv[]){
     exec_argv[i+2] = argv[i];
   }
   // execve会自动在环境变量中查找
-  char *exec_envp[] = { "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", NULL, };
+  char *exec_envp[] = { "PATH=/sd:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", NULL, };
   dup2(fd, STDERR_FILENO);
   close(STDOUT_FILENO);
   execve("/bin/strace", exec_argv, exec_envp);
