@@ -218,7 +218,7 @@ int sperf(int fd){
     remove_quoted_contents(remove_buf[0], remove_buf[1]); // 去除引号内的内容
   printf("2sdfsdf\n");
     pbuf = remove_buf[1];
-    printf("%s\n\n", pbuf);
+    printf("pbuf:%s\n\n", pbuf);
     while(*pbuf!=0 && (pbuf2 = strstr(pbuf, "\n"))!=NULL){
   printf("3sdfsdf\n");
       ret = regexec(&regex, pbuf, 3, matches, 0);
@@ -275,9 +275,9 @@ int sperf(int fd){
       }
     }
     if (*pbuf) strncpy(remove_buf[0], pbuf, sizeof(remove_buf[0]));
-    // 释放正则表达式对象
-    regfree(&regex);
   }
+  // 释放正则表达式对象
+  regfree(&regex);
   // 最后一次打印
   total_time += time;
   time = 0;
