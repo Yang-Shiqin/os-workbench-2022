@@ -221,10 +221,12 @@ int sperf(int fd){
       if (!ret) {
         // 提取系统调用名称
         int len = matches[1].rm_eo - matches[1].rm_so;
+        assert(len<16);
         strncpy(name_buf, pbuf + matches[1].rm_so, len);
         name_buf[len] = '\0';
         // 提取时间
         len = matches[2].rm_eo - matches[2].rm_so;
+        assert(len<16);
         strncpy(time_buf, pbuf + matches[2].rm_so, len);
         time_buf[len] = '\0';
 
