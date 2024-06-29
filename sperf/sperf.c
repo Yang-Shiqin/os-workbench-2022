@@ -165,7 +165,7 @@ void remove_quoted_contents(const char *input, char *output) {
   int end = 0;
   int offset = 0;
   int ret;
-
+  *output = 0;
   // 编译正则表达式
   if (regcomp(&regex, pattern, REG_EXTENDED) != 0) {
     perror("regex");
