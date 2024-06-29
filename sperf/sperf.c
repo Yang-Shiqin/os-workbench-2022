@@ -175,7 +175,7 @@ void remove_quoted_contents(const char *input, char *output) {
     end = match.rm_eo + offset;
     // 将匹配前的内容复制到输出
     strncpy(output + strlen(output), input + offset, match.rm_so);
-    printf("%d %d %d\n", strlen(output), offset, match.rm_so);
+    printf("%d %d %d\n", (int)strlen(output), offset, match.rm_so);
     // 复制双引号到输出
     offset = end;
   }
