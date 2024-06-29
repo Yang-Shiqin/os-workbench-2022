@@ -164,6 +164,7 @@ void remove_quoted_contents(const char *input, char *output) {
   int end = 0;
   int offset = 0;
   int ret;
+  int len=0;
   *output = 0;
   assert(strlen(output)==0);
   // 编译正则表达式
@@ -176,8 +177,9 @@ void remove_quoted_contents(const char *input, char *output) {
     end = match.rm_eo + offset;
     // 将匹配前的内容复制到输出
     assert(strlen(output)<512);
-    strncpy(output + strlen(output), input + offset, match.rm_so);
-    *(output + strlen(output)+match.rm_so+1) = 0;
+    len = strlen(output);
+    strncpy(output + len, input + offset, match.rm_so);
+    *(output + len+match.rm_so+1) = 0;
     printf("%d %d %d\n", (int)strlen(output), offset, match.rm_so);
     printf("%s\n\n%s\n\n%s\n\n\n", output, input, input + offset);
     // 复制双引号到输出
