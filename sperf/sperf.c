@@ -180,8 +180,6 @@ void remove_quoted_contents(const char *input, char *output) {
     len = strlen(output);
     strncpy(output + len, input + offset, match.rm_so);
     *(output + len+match.rm_so+1) = 0;
-    printf("%d %d %d\n", (int)strlen(output), offset, match.rm_so);
-    printf("%s\n\n%s\n\n%s\n\n\n", output, input, input + offset);
     // 复制双引号到输出
     offset = end;
   }
@@ -192,7 +190,7 @@ void remove_quoted_contents(const char *input, char *output) {
 }
 
 int sperf(int fd){
-  const char *pattern = "([a-zA-Z_]+)\\(.*\\)\\s*=.*<([0-9.]+)>";
+  const char *pattern = "([a-zA-Z_0-9]+)\\(.*\\)\\s*=.*<([0-9.]+)>";
   regex_t regex;
   regmatch_t matches[3];
   char buf[256] = {0};
@@ -266,7 +264,6 @@ int sperf(int fd){
       } else if (ret == REG_NOMATCH) {
         printf("No match\n");
         printf("%spbuf:%s\n", pbuf2, pbuf);
-
       } else {
         char errbuf[100];
         regerror(ret, &regex, errbuf, sizeof(errbuf));
