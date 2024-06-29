@@ -53,25 +53,26 @@ int sperf(int fd){
       assert(!(reading_name&reading_time&1)); // 不能同时正在读取
       assert((!reading)&&(reading_name|reading_time));
       int i;
+      char * pi = NULL;
       if (reading_name){// 读syscall name
-        i = strstr(pbuf, "(");
-        if(i){  // 读完syscall name
-          pbuf[i] = 0;
+        pi = strstr(pbuf, "(");
+        if(pi){  // 读完syscall name
+          *pi = 0;
           strcat(name_buf, pbuf);
           reading_name = 0;
-          pbuf += i+1;
+          pbuf = pi+1;
         }else{  // syscall name中断
           strcat(name_buf, pbuf);
           pbuf = buf+num_read;
         }
       }else if (reading_time){
-          i = strstr(pbuf, ">");
-          if (!i){  // syscall time中断
+          pi = strstr(pbuf, ">");
+          if (!pi){  // syscall time中断
             strcat(time_buf, pbuf);
             pbuf = buf+num_read;
           }else{  // 读完一条syscall
             reading_time = 0;
-            pbuf[i] = 0;
+            *pi = 0;
             strcat(time_buf, pbuf);
             int list_i;
             double tmp_time = atof(time_buf);
@@ -89,32 +90,32 @@ int sperf(int fd){
             name_buf[0] = 0;
             time_buf[0] = 0;
             reading = 0;
-            pbuf += i+1;
+            pbuf = pi+1;
             if (time>0.001){
               time = 0;
               qsort(syscall_info_list, tail, sizeof(SyscallInfo), [](const void *a, const void *b) {
                   return ((SyscallInfo *)b)->time - ((SyscallInfo *)a)->time;
               });
               printf("Top 5 syscalls by time:\n");
-              for (int i = 0; i < (tail < 5 ? tail : 5); i++) {
+              for (i = 0; i < (tail < 5 ? tail : 5); i++) {
                   printf("%s: %.6f seconds\n", syscall_info_list[i].name, syscall_info_list[i].time);
               }
             }
           }
       }else if (reading){ // 读完name还没开始读time
-        i = strstr(pbuf, "<");
-        if(i){
+        pi = strstr(pbuf, "<");
+        if(pi){
           reading_time = 1;
-          pbuf += i+1;
+          pbuf = pi+1;
         }else{
           pbuf = buf+num_read;
         }
       }else{
-        i = strstr(pbuf, "\n");
-        if (i){
+        pi = strstr(pbuf, "\n");
+        if (pi){
           reading = 1;
           reading_name = 1;
-          pbuf += i+1;
+          pbuf = pi+1;
         }else{
           pbuf = buf+num_read;
         }
