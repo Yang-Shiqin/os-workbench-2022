@@ -59,7 +59,7 @@ int sperf(int fd){
     while(pbuf<buf+num_read){
       assert(!(reading_name&reading_time&1)); // 不能同时正在读取
       printf("%d %d %d\n", reading, reading_name, reading_time);
-      assert(((!reading)&&(reading_name|reading_time))|reading);
+      assert(((!reading)&&!(reading_name|reading_time))|reading);
       int i;
       char * pi = NULL;
       if (reading_name){// 读syscall name
