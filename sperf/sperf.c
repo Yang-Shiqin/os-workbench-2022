@@ -262,8 +262,9 @@ int sperf(int fd){
         }
         pbuf = pbuf2+1;
       } else if (ret == REG_NOMATCH) {
+        // 到最后了
         printf("No match\n");
-        printf("%spbuf:%s\n", pbuf2, pbuf);
+        break;
       } else {
         char errbuf[100];
         regerror(ret, &regex, errbuf, sizeof(errbuf));
@@ -271,7 +272,6 @@ int sperf(int fd){
       }
     }
     if (*pbuf) strncpy(remove_buf[0], pbuf, sizeof(remove_buf[0]));
-    printf("sd\n");
   }
   // 释放正则表达式对象
   regfree(&regex);
