@@ -58,7 +58,6 @@ int sperf(int fd){
     // printf("%s", buf);
     while(pbuf<buf+num_read){
       assert(!(reading_name&reading_time&1)); // 不能同时正在读取
-      printf("%d %d %d\n", reading, reading_name, reading_time);
       assert(reading>=(reading_name|reading_time));
       int i;
       char * pi = NULL;
