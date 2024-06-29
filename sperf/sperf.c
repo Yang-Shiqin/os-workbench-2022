@@ -261,6 +261,7 @@ int sperf(int fd){
       } else if (ret == REG_NOMATCH) {
         // 到最后了
         printf("No match\n");
+        printf("%s\n", pbuf);
         break;
       } else {
         perror("regex");
