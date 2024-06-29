@@ -51,11 +51,10 @@ int sperf(int fd){
   char *pbuf = buf;
   char name_buf[16] = {0};  // \nsyscall_name(
   char time_buf[16] = {0};  // <syscall_time>
-  int name_tail=0, time_tail=0;
   double time=0, total_time=0;
   int reading_name = 1, reading_time = 0, reading = 1; // 1是正在读取(read没读完整), 0是没有正在读取
   SyscallInfo syscall_info_list[512] = {0};
-  int tail=0;
+  int tail=0, i;
   ssize_t num_read;
   while ((num_read=read(fd, buf, sizeof(buf)-1)) > 0){
     pbuf = buf;
@@ -65,7 +64,6 @@ int sperf(int fd){
     while(pbuf<buf+num_read){
       assert(!(reading_name&reading_time&1)); // 不能同时正在读取
       assert(reading>=(reading_name|reading_time));
-      int i;
       char * pi = NULL;
       if (reading_name){// 读syscall name
         pi = strstr(pbuf, "(");
