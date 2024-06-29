@@ -204,7 +204,7 @@ int sperf(int fd){
   int tail=0, i;
   ssize_t num_read;
   // 编译正则表达式
-  int ret = regcomp(&regex, pattern, REG_EXTENDED | REG_DOTALL);
+  int ret = regcomp(&regex, pattern, REG_EXTENDED | REG_NEWLINE);
   if (ret) {
     perror("regex");
     exit(EXIT_FAILURE);
