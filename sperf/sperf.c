@@ -161,7 +161,7 @@ void remove_quoted_contents(const char *input, char *output) {
   const char *pattern = "\"(\\\\\"|[^\"])*\"";  // 匹配两个双引号之间的内容
   regex_t regex;
   regmatch_t match;
-  int start = 0;
+  // int start = 0;
   int end = 0;
   int offset = 0;
   int ret;
@@ -174,7 +174,7 @@ void remove_quoted_contents(const char *input, char *output) {
 
   // 逐个匹配并删除
   while ((ret = regexec(&regex, input + offset, 1, &match, 0)) == 0) {
-    start = match.rm_so + offset;
+    // start = match.rm_so + offset;
     end = match.rm_eo + offset;
 
     // 将匹配前的内容复制到输出
@@ -257,7 +257,7 @@ int sperf(int fd){
           }
           printf("==================\n");
         }
-        pbuf = pubf2+1;
+        pbuf = pbuf2+1;
       } else if (ret == REG_NOMATCH) {
         printf("No match\n");
       } else {
@@ -266,7 +266,7 @@ int sperf(int fd){
         fprintf(stderr, "Regex match failed: %s\n", errbuf);
       }
     }
-    strcpy(remove_buf[0], pubf2+1);
+    strcpy(remove_buf[0], pbuf2+1);
     // 释放正则表达式对象
     regfree(&regex);
   }
