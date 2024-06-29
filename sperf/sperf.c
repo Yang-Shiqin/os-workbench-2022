@@ -9,7 +9,6 @@
 typedef struct SyscallInfo{
     char name[16];  // syscall name
     double time;    // add up duration(s)
-    // struct SyscallInfo * next;
 } SyscallInfo;
 
 // 自定义比较函数
@@ -45,117 +44,6 @@ int strace(int fd, int argc, char *argv[]){
   perror("execve");
   exit(EXIT_FAILURE);
 }
-
-// // 父进程读取管道输入, 解析并统计syscall时长, 展示出来
-// int sperf(int fd){
-//   char buf[256] = {0};
-//   char *pbuf = buf;
-//   char name_buf[16] = {0};  // \nsyscall_name(
-//   char time_buf[16] = {0};  // <syscall_time>
-//   double time=0, total_time=0;
-//   int reading_name = 1, reading_time = 0, reading = 1; // 1是正在读取(read没读完整), 0是没有正在读取
-//   SyscallInfo syscall_info_list[512] = {0};
-//   int tail=0, i;
-//   ssize_t num_read;
-//   while ((num_read=read(fd, buf, sizeof(buf)-1)) > 0){
-//     pbuf = buf;
-//     // 解析并显示时间
-//     buf[num_read] = 0;
-//     // printf("%s", buf);
-//     while(pbuf<buf+num_read){
-//       assert(!(reading_name&reading_time&1)); // 不能同时正在读取
-//       assert(reading>=(reading_name|reading_time));
-//       char * pi = NULL;
-//       if (reading_name){// 读syscall name
-//         pi = strstr(pbuf, "(");
-//         if(pi){  // 读完syscall name
-//           *pi = 0;
-//           strcat(name_buf, pbuf);
-//           reading_name = 0;
-//           pbuf = pi+1;
-//         }else{  // syscall name中断
-//           strcat(name_buf, pbuf);
-//           pbuf = buf+num_read;
-//         }
-//       }else if (reading_time){
-//           pi = strstr(pbuf, ">");
-//           if (!pi){  // syscall time中断
-//             strcat(time_buf, pbuf);
-//             pbuf = buf+num_read;
-//           }else{  // 读完一条syscall
-//             reading_time = 0;
-//             *pi = 0;
-//             strcat(time_buf, pbuf);
-//             int list_i;
-//             double tmp_time = atof(time_buf);
-//             time += tmp_time;
-//             for (list_i=0; list_i<tail; list_i++){
-//               if (0==strcmp(syscall_info_list[list_i].name, name_buf)){
-//                 syscall_info_list[list_i].time += tmp_time;
-//                 break;
-//               }
-//             }
-//             if (list_i==tail){
-//               strcpy(syscall_info_list[tail].name, name_buf);
-//               syscall_info_list[tail].time = tmp_time;
-//               tail++;
-//               assert(tail<512);
-//             }
-//             name_buf[0] = 0;
-//             time_buf[0] = 0;
-//             reading = 0;
-//             pbuf = pi+1;
-//             if (time>0.1){
-//               total_time += time;
-//               time = 0;
-//               qsort(syscall_info_list, tail, sizeof(SyscallInfo), compare); // 排序
-//               printf("Time: %.1fs\n", total_time);
-//               for (i = 0; i < (tail < 5 ? tail : 5); i++) {
-//                   // printf("%s: %.6f seconds\n", syscall_info_list[i].name, syscall_info_list[i].time);
-//                   printf("%s (%d%%)\n", syscall_info_list[i].name, (int)(syscall_info_list[i].time*100/total_time));
-//               }
-//               for (i=0; i<80; i++){
-//                 putc(0, stdout);
-//               }
-//               printf("==================\n");
-//             }
-//           }
-//       }else if (reading){ // 读完name还没开始读time
-//         pi = strstr(pbuf, "<");
-//         if(pi){
-//           reading_time = 1;
-//           pbuf = pi+1;
-//         }else{
-//           pbuf = buf+num_read;
-//         }
-//       }else{
-//         pi = strstr(pbuf, "\n");
-//         if (pi){
-//           reading = 1;
-//           reading_name = 1;
-//           pbuf = pi+1;
-//         }else{
-//           pbuf = buf+num_read;
-//         }
-//       }
-//     }
-//   }
-//   // 最后一次打印
-//   total_time += time;
-//   time = 0;
-//   qsort(syscall_info_list, tail, sizeof(SyscallInfo), compare); // 排序
-//   printf("Time: %.1fs\n", total_time);
-//   for (i = 0; i < (tail < 5 ? tail : 5); i++) {
-//       // printf("%s: %.6f seconds\n", syscall_info_list[i].name, syscall_info_list[i].time);
-//       printf("%s (%d%%)\n", syscall_info_list[i].name, (int)(syscall_info_list[i].time*100/total_time));
-//   }
-//   for (i=0; i<80; i++){
-//     putc(0, stdout);
-//   }
-//   printf("==================\n");
-//   close(fd);
-//   return 0;
-// }
 
 void remove_quoted_contents(const char *input, char *output) {
   const char *pattern = "\"(\\\\\"|[^\"])*\"";  // 匹配两个双引号之间的内容
@@ -214,7 +102,7 @@ int sperf(int fd){
     strcat(remove_buf[0], buf);
     remove_quoted_contents(remove_buf[0], remove_buf[1]); // 去除引号内的内容
     pbuf = remove_buf[1];
-    printf("buf:%s\n\n0:%s\n\n1:%s\n\n", buf, remove_buf[0], pbuf);
+    fprintf(stderr, "buf:%s\n\n0:%s\n\n1:%s\n\n", buf, remove_buf[0], pbuf);
     while(*pbuf!=0 && (pbuf2 = strstr(pbuf, "\n"))!=NULL){
       ret = regexec(&regex, pbuf, 3, matches, 0);
       if (!ret) {
