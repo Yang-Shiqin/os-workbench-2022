@@ -261,8 +261,8 @@ int sperf(int fd){
       } else if (ret == REG_NOMATCH) {
         // 到最后了
         printf("No match\n");
-        printf("%s\n", pbuf);
-        break;
+        printf("%s\n\n%s\n\n", pbuf, pbuf2);
+        // break;
       } else {
         perror("regex");
         exit(EXIT_FAILURE);
