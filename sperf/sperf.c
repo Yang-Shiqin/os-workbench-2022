@@ -213,7 +213,9 @@ int sperf(int fd){
   }
   while ((num_read=read(fd, buf, sizeof(buf)-1)) > 0){
     buf[num_read]=0;
+    printf("buf:%s\n\n", buf);
     strcat(remove_buf[0], buf);
+    printf("remove_buf[0]:%s\n\n", remove_buf[0]);
   printf("1sdfsdf\n");
     remove_quoted_contents(remove_buf[0], remove_buf[1]); // 去除引号内的内容
   printf("2sdfsdf\n");
