@@ -211,7 +211,7 @@ int sperf(int fd){
     printf("remove_buf[0]:%s\n\n", remove_buf[0]);
     remove_quoted_contents(remove_buf[0], remove_buf[1]); // 去除引号内的内容
     pbuf = remove_buf[1];
-    printf("pbuf:%s\n\n", pbuf);
+    printf("pbuffff:%s\n\n", pbuf);
     while(*pbuf!=0 && (pbuf2 = strstr(pbuf, "\n"))!=NULL){
       ret = regexec(&regex, pbuf, 3, matches, 0);
       if (!ret) {
