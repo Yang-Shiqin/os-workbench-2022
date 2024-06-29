@@ -216,7 +216,7 @@ int sperf(int fd){
     strcat(remove_buf[0], buf);
     remove_quoted_contents(remove_buf[0], remove_buf[1]); // 去除引号内的内容
     pbuf = remove_buf[1];
-    while(pbuf2 = strstr(pbuf, "\n")){
+    while((pbuf2 = strstr(pbuf, "\n"))!=NULL){
       ret = regexec(&regex, pbuf, 3, matches, 0);
       if (!ret) {
         // 提取系统调用名称
