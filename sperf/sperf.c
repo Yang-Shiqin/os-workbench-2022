@@ -268,7 +268,7 @@ int sperf(int fd){
         fprintf(stderr, "Regex match failed: %s\n", errbuf);
       }
     }
-    if (*(pbuf2+1)) strncpy(remove_buf[0], pbuf2+1, sizeof(remove_buf[0]));
+    if (*(pbuf2+1)) strncpy(remove_buf[0], pbuf2+1, 512);
     // 释放正则表达式对象
     regfree(&regex);
   }
