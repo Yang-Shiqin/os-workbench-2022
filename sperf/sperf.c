@@ -174,14 +174,12 @@ void remove_quoted_contents(const char *input, char *output) {
 
   // 逐个匹配并删除
   while ((ret = regexec(&regex, input + offset, 1, &match, 0)) == 0) {
-    printf("%d\n", ret);
     // start = match.rm_so + offset;
     end = match.rm_eo + offset;
 
     // 将匹配前的内容复制到输出
     strncpy(output + strlen(output), input + offset, match.rm_so);
     // 复制双引号到输出
-    strcat(output, "\"\"");
     offset = end;
   }
 
