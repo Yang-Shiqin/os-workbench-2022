@@ -11,7 +11,13 @@ typedef struct SyscallInfo{
     // struct SyscallInfo * next;
 } SyscallInfo;
 
-
+// 自定义比较函数
+int compare(const void *a, const void *b) {
+    SyscallInfo *s1 = (SyscallInfo *)a;
+    SyscallInfo *s2 = (SyscallInfo *)b;
+    // 按照 score 字段的降序排列
+    return s2->time - s1->time;
+}
 
 // 子进程调用strace CMD [ARG], 输出管道给父进程
 int strace(int fd, int argc, char *argv[]){
@@ -94,9 +100,7 @@ int sperf(int fd){
             pbuf = pi+1;
             if (time>0.001){
               time = 0;
-              qsort(syscall_info_list, tail, sizeof(SyscallInfo), [](const void *a, const void *b) {
-                  return ((SyscallInfo *)b)->time - ((SyscallInfo *)a)->time;
-              });
+              qsort(syscall_info_list, tail, sizeof(SyscallInfo), compare);
               printf("Top 5 syscalls by time:\n");
               for (i = 0; i < (tail < 5 ? tail : 5); i++) {
                   printf("%s: %.6f seconds\n", syscall_info_list[i].name, syscall_info_list[i].time);
