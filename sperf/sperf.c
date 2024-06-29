@@ -190,7 +190,7 @@ void remove_quoted_contents(const char *input, char *output) {
 }
 
 int sperf(int fd){
-  const char *pattern = "([a-zA-Z_0-9]+)\\(.*[\n]*\\)\\s*=.*<([0-9.]+)>";
+  const char *pattern = "([a-zA-Z_0-9]+)\\(.*\\)\\s*=.*<([0-9.]+)>";
   regex_t regex;
   regmatch_t matches[3];
   char buf[256] = {0};
@@ -258,7 +258,9 @@ int sperf(int fd){
           }
           printf("==================\n");
         }
-        pbuf = pbuf2+1;
+        // pbuf = pbuf2+1;  // 坑: syscall中间有回车, 因此应该从匹配结尾继续
+        pbuf += matches[0].rm_eo+1;
+        printf("%c\n\n", pbuf);
       } else if (ret == REG_NOMATCH) {
         // 到最后了
         printf("No match\n");
