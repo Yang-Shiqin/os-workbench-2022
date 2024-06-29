@@ -211,14 +211,17 @@ int sperf(int fd){
     perror("regex");
     exit(EXIT_FAILURE);
   }
-  printf("sdfsdf\n");
   while ((num_read=read(fd, buf, sizeof(buf)-1)) > 0){
     buf[num_read]=0;
     strcat(remove_buf[0], buf);
+  printf("1sdfsdf\n");
     remove_quoted_contents(remove_buf[0], remove_buf[1]); // 去除引号内的内容
+  printf("2sdfsdf\n");
     pbuf = remove_buf[1];
-    while((pbuf2 = strstr(pbuf, "\n"))!=NULL){
+    while(*pbuf!=0 && (pbuf2 = strstr(pbuf, "\n"))!=NULL){
+  printf("3sdfsdf\n");
       ret = regexec(&regex, pbuf, 3, matches, 0);
+  printf("4sdfsdf\n");
       if (!ret) {
         // 提取系统调用名称
         int len = matches[1].rm_eo - matches[1].rm_so;
