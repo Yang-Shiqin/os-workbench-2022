@@ -218,11 +218,13 @@ int sperf(int fd){
     remove_quoted_contents(remove_buf[0], remove_buf[1]); // 去除引号内的内容
   printf("2sdfsdf\n");
     pbuf = remove_buf[1];
+    printf("%s\n\n", pbuf);
     while(*pbuf!=0 && (pbuf2 = strstr(pbuf, "\n"))!=NULL){
   printf("3sdfsdf\n");
       ret = regexec(&regex, pbuf, 3, matches, 0);
   printf("4sdfsdf\n");
       if (!ret) {
+  printf("5sdfsdf\n");
         // 提取系统调用名称
         int len = matches[1].rm_eo - matches[1].rm_so;
         assert(len<16);
