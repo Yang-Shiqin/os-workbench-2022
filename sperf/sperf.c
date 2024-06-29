@@ -106,11 +106,11 @@ int sperf(int fd){
             time_buf[0] = 0;
             reading = 0;
             pbuf = pi+1;
-            if (time>0.001){
+            if (time>0.1){
               total_time += time;
               time = 0;
               qsort(syscall_info_list, tail, sizeof(SyscallInfo), compare); // 排序
-              printf("Time: %.3fs\n", total_time);
+              printf("Time: %.1fs\n", total_time);
               for (i = 0; i < (tail < 5 ? tail : 5); i++) {
                   // printf("%s: %.6f seconds\n", syscall_info_list[i].name, syscall_info_list[i].time);
                   printf("%s (%d%%)\n", syscall_info_list[i].name, (int)(syscall_info_list[i].time*100/total_time));
