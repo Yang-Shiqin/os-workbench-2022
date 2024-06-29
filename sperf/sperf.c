@@ -151,13 +151,13 @@ int sperf(int fd){
         assert(*(pbuf)!='\n');
       } else if (ret == REG_NOMATCH) {
         // 到最后了
-        printf("pbuf2-1:%s\n", (pbuf2-1));
-        printf("pbuf2:%s\n", (pbuf2));
-        printf("pbuf:%s\n", (pbuf));
-        printf("remove_buf:%s\n", (remove_buf[0]));
-        printf("%c\n", *(pbuf2-1));
+        if (*(pbuf2-1)=='?' || *(pbuf2)=='+') break;
+        // printf("pbuf2-1:%s\n", (pbuf2-1));
+        // printf("pbuf2:%s\n", (pbuf2));
+        // printf("pbuf:%s\n", (pbuf));
+        // printf("remove_buf:%s\n", (remove_buf[0]));
+        // printf("%c\n", *(pbuf2-1));
         // assert(*(pbuf2-1)=='?');
-        break;
       } else {
         perror("regex");
         exit(EXIT_FAILURE);
