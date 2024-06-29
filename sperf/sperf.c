@@ -52,7 +52,7 @@ int sperf(int fd){
   char name_buf[16] = {0};  // \nsyscall_name(
   char time_buf[16] = {0};  // <syscall_time>
   int name_tail=0, time_tail=0;
-  double time=0;
+  double time=0, total_time=0;
   int reading_name = 1, reading_time = 0, reading = 1; // 1是正在读取(read没读完整), 0是没有正在读取
   SyscallInfo syscall_info_list[512] = {0};
   int tail=0;
@@ -100,18 +100,25 @@ int sperf(int fd){
               strcpy(syscall_info_list[tail].name, name_buf);
               syscall_info_list[tail].time = tmp_time;
               tail++;
+              assert(tail<512);
             }
             name_buf[0] = 0;
             time_buf[0] = 0;
             reading = 0;
             pbuf = pi+1;
             if (time>0.001){
+              total_time += time;
               time = 0;
-              qsort(syscall_info_list, tail, sizeof(SyscallInfo), compare);
-              printf("Top 5 syscalls by time:\n");
-              for (i = 0; i < tail/*(tail < 5 ? tail : 5)*/; i++) {
-                  printf("%s: %.6f seconds\n", syscall_info_list[i].name, syscall_info_list[i].time);
+              qsort(syscall_info_list, tail, sizeof(SyscallInfo), compare); // 排序
+              printf("Time: %.3fs\n", total_time);
+              for (i = 0; i < (tail < 5 ? tail : 5); i++) {
+                  // printf("%s: %.6f seconds\n", syscall_info_list[i].name, syscall_info_list[i].time);
+                  printf("%s (%d%%)\n", syscall_info_list[i].name, (int)syscall_info_list[i].time*100/total_time);
               }
+              for (i=0; i<80; i++){
+                putch(0);
+              }
+              printf("==================\n");
             }
           }
       }else if (reading){ // 读完name还没开始读time
@@ -133,10 +140,6 @@ int sperf(int fd){
         }
       }
     }
-
-// [ ] todo
-    
-    // printf("[%d] Got: '%s'\n", getpid(), buf);
   }
   close(fd);
   return 0;
