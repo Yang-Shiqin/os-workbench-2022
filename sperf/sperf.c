@@ -141,6 +141,19 @@ int sperf(int fd){
       }
     }
   }
+  // 最后一次打印
+  total_time += time;
+  time = 0;
+  qsort(syscall_info_list, tail, sizeof(SyscallInfo), compare); // 排序
+  printf("Time: %.1fs\n", total_time);
+  for (i = 0; i < (tail < 5 ? tail : 5); i++) {
+      // printf("%s: %.6f seconds\n", syscall_info_list[i].name, syscall_info_list[i].time);
+      printf("%s (%d%%)\n", syscall_info_list[i].name, (int)(syscall_info_list[i].time*100/total_time));
+  }
+  for (i=0; i<80; i++){
+    putc(0, stdout);
+  }
+  printf("==================\n");
   close(fd);
   return 0;
 }
