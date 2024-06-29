@@ -214,7 +214,6 @@ int sperf(int fd){
     strcat(remove_buf[0], buf);
     remove_quoted_contents(remove_buf[0], remove_buf[1]); // 去除引号内的内容
     pbuf = remove_buf[1];
-    printf("buf:%s\n\n0:%s\n\n1:%s\n\n", buf, remove_buf[0], pbuf);
     while(*pbuf!=0 && (pbuf2 = strstr(pbuf, "\n"))!=NULL){
       ret = regexec(&regex, pbuf, 3, matches, 0);
       if (!ret) {
@@ -263,8 +262,7 @@ int sperf(int fd){
         assert(*(pbuf)!='\n');
       } else if (ret == REG_NOMATCH) {
         // 到最后了
-        printf("No match\n");
-        printf("pbuf:%s\n\npubf2:%s\n\n", pbuf, pbuf2);
+        assert(*(pbuf2-1)=='?');
         break;
       } else {
         perror("regex");
