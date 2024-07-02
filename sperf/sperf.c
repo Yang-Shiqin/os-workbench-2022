@@ -172,6 +172,7 @@ int sperf(int fd){
   }
   printf("==================\n");
   close(fd);
+  wait(NULL);
   return 0;
 }
 
